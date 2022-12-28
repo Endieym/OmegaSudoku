@@ -18,8 +18,17 @@ internal static class SudokuSolver
 
     public static bool InitialBoardValidation(Board board)
     {
-        return BoardValidation.BoardValidate(board);
-    }
+        try
+        {
+            return BoardValidation.BoardValidate(board);
+        }
+        catch (BoardException be)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(be.Message);
+            Console.ResetColor();
+            return false;
+        }
 
-    
+    }
 }

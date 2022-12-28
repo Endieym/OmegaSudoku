@@ -17,5 +17,6 @@ internal static class Constants
     public const string InputMessage = "Enter a string:";
 
     public const int BoardScale = 9;
+    public static readonly int BoxSize = (int)Math.Sqrt(BoardScale);
 
 }
