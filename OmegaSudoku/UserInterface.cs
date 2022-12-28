@@ -14,7 +14,7 @@ internal static class UserInterface
 
 
         GetInput();
-        
+
 
     }
 
@@ -32,14 +32,20 @@ internal static class UserInterface
 
         string input = Console.ReadLine();
 
-        if (StringValidation.Validate(input))
+
+        try
         {
+            StringValidation.Validate(input);
             SudokuSolver.SolveSuduko(input);
+
         }
-        else
+        catch (InputException ie)
         {
-            Console.WriteLine("Incorrect input!");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(ie.Message);
+            Console.ResetColor();
             GetInput();
+
         }
 
     }
