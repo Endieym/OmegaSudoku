@@ -36,6 +36,8 @@ internal static class UserInterface
         try
         {
             StringValidation.Validate(input);
+            Console.WriteLine("Success!");
+
             SudokuSolver.SolveSuduko(input);
 
         }
