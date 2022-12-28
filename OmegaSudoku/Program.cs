@@ -1,10 +1,21 @@
-﻿namespace Sudoko
+﻿namespace OmegaSudoku;
+
+class Program
 {
-    class Program
+    static void Main(string[] args) // Main Function, calls for UI to be initialized
     {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Hello World");
-        }
+        InitiateUI();
+        Console.ReadKey();
     }
+
+    static void InitiateUI()  // calls for UserInterface class to work
+    {
+        UserInterface.InitiateUI();
+    }
+
+
+
+
+
+
 }
