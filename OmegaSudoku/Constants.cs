@@ -16,7 +16,7 @@ internal static class Constants
         "\n800000070006010053040600000000080400003000700020005038000000800004050061900002000";
     public const string InputMessage = "Enter a string:";
 
-    public const int BoardScale = 9;
-    public static readonly int BoxSize = (int)Math.Sqrt(BoardScale);
+    public const int MaxScale = 25;
+    public static readonly int MaxBoxSize = (int)Math.Sqrt(MaxScale);
 
 }

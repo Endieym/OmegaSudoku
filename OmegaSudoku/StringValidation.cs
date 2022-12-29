@@ -12,18 +12,18 @@ internal static class StringValidation
     {
         if(string.IsNullOrWhiteSpace(Input))
             throw new EmptyStringException();
-        if (!CheckType(Input, "digit"))
+        if (!CheckType(Input))
             return false;
-        if (!CheckLength(Input, Constants.BoardScale))
+        if (!CheckLength(Input.Length))
             throw new IllegalSizeException(Input.Length); 
         return true;
     }
-    public static bool CheckType(string Input, string Type) 
+    public static bool CheckType(string Input) 
     {
         int pos = 0;
         foreach (char c in Input)
         {
-            if (!IsType(c, "digit"))
+            if (!IsType(c, Input.Length))
                 throw new IllegalCharacterException(Input, pos);
             pos++;
         }
@@ -31,21 +31,23 @@ internal static class StringValidation
     
     }
 
-    public static bool CheckLength(string Input, int scale)
+    public static bool CheckLength(int scale)
     {
-        return Input.Length == scale * scale;
+
+        double result = Math.Sqrt(scale);
+        if (result > 25 || result < 1)  // Possible range of Board scale is between 1*1 to 25*25
+            return false;
+        return result % 1 == 0;
     }
     
-    public static bool IsType(char c, string type)
+    public static bool IsType(char c, int length)
     {
-        if (type == "digit")
-        {
-            if (c < '0' || c > '9')
-                return false;
-            return true;
-        }
-        else
+        
+        if (c < '0' || c > ('0'+(int)Math.Sqrt(length)))
             return false;
+        return true;
+        
+       
     }
     
 }

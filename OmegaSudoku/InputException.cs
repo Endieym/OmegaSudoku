@@ -34,7 +34,7 @@ internal class IllegalSizeException : InputException
 {
     public IllegalSizeException(int length) : base("String is not at the correct length!\n"+
         "Input length: "+ length +
-        "\n"+"Expected length: "+(Constants.BoardScale* Constants.BoardScale)) { }
+        "\n"+"Length of the string should be between 1*1 to 25*25. ") { }
 
 }
 

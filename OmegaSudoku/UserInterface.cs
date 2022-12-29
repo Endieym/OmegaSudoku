@@ -38,7 +38,7 @@ internal static class UserInterface
             StringValidation.Validate(input);
             Console.WriteLine("Success!");
 
-            SudokuSolver.SolveSuduko(input);
+            SudokuSolver.SolveSuduko(input, (int)Math.Sqrt(input.Length));
 
         }
         catch (InputException ie)

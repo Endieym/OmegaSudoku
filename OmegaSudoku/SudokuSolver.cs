@@ -8,9 +8,9 @@ namespace OmegaSudoku;
 
 internal static class SudokuSolver
 {
-    public static void SolveSuduko(string ValidatedInput)
+    public static void SolveSuduko(string ValidatedInput, int BoardSize)
     {
-        Board board = new Board(ValidatedInput);
+        Board board = new Board(ValidatedInput, BoardSize);
         
         board.PrintBoard();
         InitialBoardValidation(board);

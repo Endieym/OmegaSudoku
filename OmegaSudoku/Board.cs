@@ -9,19 +9,25 @@ namespace OmegaSudoku;
 internal class Board
 {
     private Cell[,] board;
+    public int BoardSize;
+    public int BoxSize;
 
     public Board()
     {
-        this.board = new Cell[Constants.BoardScale, Constants.BoardScale];
+        BoardSize = 0;
+        BoxSize = 0;
+        this.board = new Cell[this.BoardSize, this.BoardSize];
     }
-    public Board(string boardString)
+    public Board(string boardString, int boardSize)
     {
-        this.board = new Cell[Constants.BoardScale, Constants.BoardScale];
-        for (int i = 0; i < Constants.BoardScale; i++)
+        this.BoardSize = boardSize;
+        this.BoxSize = (int)Math.Sqrt(boardSize);
+        this.board = new Cell[this.BoardSize, this.BoardSize];
+        for (int i = 0; i < this.BoardSize; i++)
         {
-            for (int j = 0; j < Constants.BoardScale; j++)
+            for (int j = 0; j < this.BoardSize; j++)
             {
-                this.board[i,j] = new Cell(boardString[j+(Constants.BoardScale*i)]-'0',i,j);
+                this.board[i,j] = new Cell(boardString[j+(this.BoardSize * i)],i,j);
             }
         }
     }
@@ -35,24 +41,24 @@ internal class Board
     public override string ToString()
     {
         string str = "";
-        for (int i = 0; i < Constants.BoardScale; i++)
+        for (int i = 0; i < this.BoardSize; i++)
         {
             str+=("| ");
-            for (int j = 0; j < Constants.BoardScale; j++)
+            for (int j = 0; j < this.BoardSize; j++)
             {
                 str += (board[i, j].Value);
                 str += (' ');
-                if ((j + 1) % 3 == 0) str += (' ');
+                if ((j + 1) % Math.Sqrt(this.BoardSize) == 0) str += (' ');
 
             }
             str += ("|\n");
-            if ((i + 1) % 3 == 0) str += (" \n");
+            if ((i + 1) % Math.Sqrt(this.BoardSize) == 0) str += (" \n");
         }
         return str;
     }
     public bool BoardValid()
     {   
-        for (int i = 0; i < Constants.BoardScale; i++)
+        for (int i = 0; i < this.BoardSize; i++)
         {
             if (CheckRowDups(i)!= -1) return false;
            
@@ -64,10 +70,10 @@ internal class Board
     public int CheckRowDups(int row)
     {
         var set = new HashSet<int>(); 
-        for (int i = 0; i < Constants.BoardScale; i++)
+        for (int i = 0; i < this.BoardSize; i++)
         {
            
-            if (!set.Add(this.board[row,i].Value)&& this.board[row, i].Value != 0)
+            if (!set.Add(this.board[row,i].Value)&& this.board[row, i].Value != '0')
                 return i;
         }
         return -1;
@@ -75,9 +81,9 @@ internal class Board
     public int CheckColDups(int col)
     {
         var set = new HashSet<int>();
-        for (int i = 0; i < Constants.BoardScale; i++)
+        for (int i = 0; i < this.BoardSize; i++)
         {
-            if (!set.Add(this.board[i, col].Value) && this.board[i, col].Value != 0)
+            if (!set.Add(this.board[i, col].Value) && this.board[i, col].Value != '0')
                 return i;
         }
         return -1;
@@ -86,11 +92,11 @@ internal class Board
     public int CheckBoxDups(int iBox, int jBox)
     {
         var set = new HashSet<int>();
-        for (int i = iBox; i < iBox+Constants.BoxSize; i++)
+        for (int i = iBox; i < iBox+ this.BoxSize; i++)
         {
-            for(int j = jBox; j < jBox + Constants.BoxSize; j++)
+            for(int j = jBox; j < jBox + this.BoxSize; j++)
             {
-                if(!set.Add(this.board[i, j].Value) && this.board[i, j].Value != 0)
+                if(!set.Add(this.board[i, j].Value) && this.board[i, j].Value != '0')
                 return i;
             }
             

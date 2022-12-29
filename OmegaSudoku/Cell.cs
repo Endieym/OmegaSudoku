@@ -8,14 +8,14 @@ namespace OmegaSudoku;
 
 internal class Cell
 {
-    public Cell(int value, int row, int col)
+    public Cell(char value, int row, int col)
     {
         this.Value = value;
         this.Row = row;
         this.Col = col;
         
     }
-    public int Value { get; set; }
+    public char Value { get; set; }
     
     public int Row { get; set; }
 
