@@ -12,10 +12,11 @@ internal static class StringValidation
     {
         if(string.IsNullOrWhiteSpace(Input))
             throw new EmptyStringException();
+        if (!CheckLength(Input.Length))
+            throw new IllegalSizeException(Input.Length);
         if (!CheckType(Input))
             return false;
-        if (!CheckLength(Input.Length))
-            throw new IllegalSizeException(Input.Length); 
+       
         return true;
     }
     public static bool CheckType(string Input) 

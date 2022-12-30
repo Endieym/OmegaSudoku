@@ -65,7 +65,15 @@ internal class Board
         for (int i = 0; i < this.BoardSize; i++)
         {
             if (CheckRowDups(i)!= -1) return false;
+            if (CheckColDups(i)!= -1) return false;
            
+        }
+        for (int i = 0; i < this.BoardSize; i += this.BoxSize)
+        {
+            for (int j = 0; j < this.BoardSize; j += this.BoxSize)
+            {
+                if (this.CheckBoxDups(i, j) != -1) return false;
+            }
         }
         return true;
     }
