@@ -57,7 +57,11 @@ internal class Board
         return str;
     }
     public bool BoardValid()
-    {   
+    {
+        var setRow = new HashSet<int>();
+        var setCol = new HashSet<int>();
+        var setBox = new HashSet<int>();
+
         for (int i = 0; i < this.BoardSize; i++)
         {
             if (CheckRowDups(i)!= -1) return false;
@@ -69,41 +73,78 @@ internal class Board
 
     public int CheckRowDups(int row)
     {
-        var set = new HashSet<int>(); 
-        for (int i = 0; i < this.BoardSize; i++)
+        var currRow = GetRow(row);
+        var set = new HashSet<int>();
+        int i = 0;
+        foreach (var cell in currRow)
         {
-           
-            if (!set.Add(this.board[row,i].Value)&& this.board[row, i].Value != '0')
+            if (!set.Add(cell.Value) && cell.Value != '0')
                 return i;
+            i++;
         }
         return -1;
+    }
+
+    public IEnumerable<Cell> GetRow(int row)
+    {
+        for (int i = 0; i < this.BoardSize; i++)
+        {
+
+            yield return this.board[row, i];
+                
+        }
+    }
+    public IEnumerable<Cell> GetCol(int col)
+    {
+        for (int i = 0; i < this.BoardSize; i++)
+        {
+
+            yield return this.board[i, col];
+
+        }
     }
     public int CheckColDups(int col)
     {
+        var currCol = GetCol(col);
         var set = new HashSet<int>();
-        for (int i = 0; i < this.BoardSize; i++)
+        int i = 0;
+        foreach (var cell in currCol)
         {
-            if (!set.Add(this.board[i, col].Value) && this.board[i, col].Value != '0')
+            if (!set.Add(cell.Value) && cell.Value != '0')
                 return i;
+            i++;
         }
         return -1;
     }
 
-    public int CheckBoxDups(int iBox, int jBox)
+    public int CheckBoxDups(int row, int col)
     {
+        var currBox = GetBox(row, col);
         var set = new HashSet<int>();
-        for (int i = iBox; i < iBox+ this.BoxSize; i++)
+        int i = 0;
+        foreach (var cell in currBox)
         {
-            for(int j = jBox; j < jBox + this.BoxSize; j++)
-            {
-                if(!set.Add(this.board[i, j].Value) && this.board[i, j].Value != '0')
+            if (!set.Add(cell.Value) && cell.Value != '0')
                 return i;
-            }
-            
+            i++;
         }
         return -1;
     }
 
-    
+    public IEnumerable<Cell> GetBox(int row, int col)
+    {
+        var iBox = row / this.BoxSize;
+        var jBox = col / this.BoxSize;
+        for (int i = iBox * this.BoxSize; i < iBox + this.BoxSize; i++)
+        {
+            for (int j = jBox * this.BoxSize; j < jBox + this.BoxSize; j++)
+            {
+                yield return this.board[i, j];
+            }
+
+        }
+    }
+
+
 
 }

@@ -12,6 +12,7 @@ internal class BoardValidation
     {
         for (int i = 0; i < board.BoardSize; i++)
         {
+            
             if (board.CheckRowDups(i) != -1) throw new RowException(i);
             if (board.CheckColDups(i) != -1) throw new ColException(i);
         }
