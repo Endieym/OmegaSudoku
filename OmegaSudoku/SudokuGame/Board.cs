@@ -58,9 +58,6 @@ internal class Board
     }
     public bool BoardValid()
     {
-        var setRow = new HashSet<int>();
-        var setCol = new HashSet<int>();
-        var setBox = new HashSet<int>();
 
         for (int i = 0; i < BoardSize; i++)
         {
