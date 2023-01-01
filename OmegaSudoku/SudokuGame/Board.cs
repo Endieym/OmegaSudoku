@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OmegaSudoku;
+namespace OmegaSudoku.SudokuGame;
 
 internal class Board
 {
@@ -16,43 +16,43 @@ internal class Board
     {
         BoardSize = 0;
         BoxSize = 0;
-        this.board = new Cell[this.BoardSize, this.BoardSize];
+        board = new Cell[BoardSize, BoardSize];
     }
     public Board(string boardString, int boardSize)
     {
-        this.BoardSize = boardSize;
-        this.BoxSize = (int)Math.Sqrt(boardSize);
-        this.board = new Cell[this.BoardSize, this.BoardSize];
-        for (int i = 0; i < this.BoardSize; i++)
+        BoardSize = boardSize;
+        BoxSize = (int)Math.Sqrt(boardSize);
+        board = new Cell[BoardSize, BoardSize];
+        for (int i = 0; i < BoardSize; i++)
         {
-            for (int j = 0; j < this.BoardSize; j++)
+            for (int j = 0; j < BoardSize; j++)
             {
-                this.board[i,j] = new Cell(boardString[j+(this.BoardSize * i)],i,j);
+                board[i, j] = new Cell(boardString[j + BoardSize * i], i, j);
             }
         }
     }
-    
+
     public void PrintBoard()
     {
         Console.WriteLine(ToString());
     }
-    
+
 
     public override string ToString()
     {
         string str = "";
-        for (int i = 0; i < this.BoardSize; i++)
+        for (int i = 0; i < BoardSize; i++)
         {
-            str+=("| ");
-            for (int j = 0; j < this.BoardSize; j++)
+            str += "| ";
+            for (int j = 0; j < BoardSize; j++)
             {
-                str += (board[i, j].Value);
-                str += (' ');
-                if ((j + 1) % Math.Sqrt(this.BoardSize) == 0) str += (' ');
+                str += board[i, j].Value;
+                str += ' ';
+                if ((j + 1) % Math.Sqrt(BoardSize) == 0) str += ' ';
 
             }
-            str += ("|\n");
-            if ((i + 1) % Math.Sqrt(this.BoardSize) == 0) str += (" \n");
+            str += "|\n";
+            if ((i + 1) % Math.Sqrt(BoardSize) == 0) str += " \n";
         }
         return str;
     }
@@ -62,17 +62,17 @@ internal class Board
         var setCol = new HashSet<int>();
         var setBox = new HashSet<int>();
 
-        for (int i = 0; i < this.BoardSize; i++)
+        for (int i = 0; i < BoardSize; i++)
         {
-            if (CheckRowDups(i)!= -1) return false;
-            if (CheckColDups(i)!= -1) return false;
-           
+            if (CheckRowDups(i) != -1) return false;
+            if (CheckColDups(i) != -1) return false;
+
         }
-        for (int i = 0; i < this.BoardSize; i += this.BoxSize)
+        for (int i = 0; i < BoardSize; i += BoxSize)
         {
-            for (int j = 0; j < this.BoardSize; j += this.BoxSize)
+            for (int j = 0; j < BoardSize; j += BoxSize)
             {
-                if (this.CheckBoxDups(i, j) != -1) return false;
+                if (CheckBoxDups(i, j) != -1) return false;
             }
         }
         return true;
@@ -95,19 +95,19 @@ internal class Board
 
     public IEnumerable<Cell> GetRow(int row)
     {
-        for (int i = 0; i < this.BoardSize; i++)
+        for (int i = 0; i < BoardSize; i++)
         {
 
-            yield return this.board[row, i];
-                
+            yield return board[row, i];
+
         }
     }
     public IEnumerable<Cell> GetCol(int col)
     {
-        for (int i = 0; i < this.BoardSize; i++)
+        for (int i = 0; i < BoardSize; i++)
         {
 
-            yield return this.board[i, col];
+            yield return board[i, col];
 
         }
     }
@@ -141,13 +141,13 @@ internal class Board
 
     public IEnumerable<Cell> GetBox(int row, int col)
     {
-        var iBox = row / this.BoxSize;
-        var jBox = col / this.BoxSize;
-        for (int i = iBox * this.BoxSize; i < iBox + this.BoxSize; i++)
+        var iBox = row / BoxSize;
+        var jBox = col / BoxSize;
+        for (int i = iBox * BoxSize; i < iBox + BoxSize; i++)
         {
-            for (int j = jBox * this.BoxSize; j < jBox + this.BoxSize; j++)
+            for (int j = jBox * BoxSize; j < jBox + BoxSize; j++)
             {
-                yield return this.board[i, j];
+                yield return board[i, j];
             }
 
         }

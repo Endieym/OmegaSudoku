@@ -3,23 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OmegaSudoku.Exceptions;
 
-namespace OmegaSudoku;
+namespace OmegaSudoku.UI;
 
 internal static class StringValidation
 {
     public static bool Validate(string Input)
     {
-        if(string.IsNullOrWhiteSpace(Input))
+        if (string.IsNullOrWhiteSpace(Input))
             throw new EmptyStringException();
         if (!CheckLength(Input.Length))
             throw new IllegalSizeException(Input.Length);
         if (!CheckType(Input))
             return false;
-       
+
         return true;
     }
-    public static bool CheckType(string Input) 
+    public static bool CheckType(string Input)
     {
         int pos = 0;
         foreach (char c in Input)
@@ -29,7 +30,7 @@ internal static class StringValidation
             pos++;
         }
         return true;
-    
+
     }
 
     public static bool CheckLength(int scale)
@@ -40,15 +41,15 @@ internal static class StringValidation
             return false;
         return result % 1 == 0;
     }
-    
+
     public static bool IsType(char c, int length)
     {
-        
-        if (c < '0' || c > ('0'+(int)Math.Sqrt(length)))
+
+        if (c < '0' || c > '0' + (int)Math.Sqrt(length))
             return false;
         return true;
-        
-       
+
+
     }
-    
+
 }
