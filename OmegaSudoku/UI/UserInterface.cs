@@ -15,7 +15,7 @@ internal static class UserInterface
     {
 
         WelcomeMessage();
-        GetInput();
+        ChooseInput();
 
 
     }
@@ -28,13 +28,50 @@ internal static class UserInterface
         Console.WriteLine(Constants.Seperator);
     }
 
-    public static void GetInput() // Asks for a string from the user, and sends the string to validation, then to solver
+    // Reads the character and sends to functions getting 
+    public static void ChooseInput()  
     {
+        char character = (char)Console.Read();
+        _ = Console.ReadLine();
+        if (character == 'c' || character == 'C')
+            GetInput(InputFromConsole());
+        else if (character == 'f' || character == 'F')
+            GetInput(InputFromFile());
+        else
+        {
+            Console.WriteLine("Wrong char, try again:");
+            ChooseInput();
+        }
+        
+    }
+
+    public static string InputFromFile()
+    {
+        Constants.currentInput = Constants.inputType.FILE;
+
+        Console.WriteLine(Constants.FileMessage);
+
+        string path = "..\\..\\";
+        string endOfPath = Console.ReadLine();
+        path += endOfPath;
+        path += ".txt";
+
+        string input = File.ReadAllText(path);
+
+        Console.WriteLine(input);
+        return input;
+    }
+    
+    public static string InputFromConsole()
+    {
+        Constants.currentInput = Constants.inputType.CONSOLE;
         Console.WriteLine(Constants.InputMessage);
 
         string input = Console.ReadLine();
-
-
+        return input;
+    }
+    public static void GetInput(string input) // Asks for a string from the user, and sends the string to validation, then to solver
+    {
         try
         {
             StringValidation.Validate(input);
@@ -48,7 +85,7 @@ internal static class UserInterface
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(ie.Message);
             Console.ResetColor();
-            GetInput();
+            WelcomeMessage();
 
         }
 
