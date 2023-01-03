@@ -1,4 +1,6 @@
-﻿namespace OmegaSudoku;
+﻿using OmegaSudoku.UI;
+
+namespace OmegaSudoku;
 
 class Program
 {

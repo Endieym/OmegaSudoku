@@ -1,18 +1,20 @@
-﻿using System;
+﻿using OmegaSudoku.Exceptions;
+using OmegaSudoku.SudokuGame;
+using OmegaSudoku.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OmegaSudoku;
+namespace OmegaSudoku.UI;
 
 internal static class UserInterface
 {
     public static void InitiateUI() // Initiates the User Interface, calls for input
     {
+
         WelcomeMessage();
-
-
         GetInput();
 
 
@@ -38,7 +40,7 @@ internal static class UserInterface
             StringValidation.Validate(input);
             Console.WriteLine("Success!");
 
-            SudokuSolver.SolveSuduko(input);
+            SudokuSolver.SolveSuduko(input, (int)Math.Sqrt(input.Length));
 
         }
         catch (InputException ie)
