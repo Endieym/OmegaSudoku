@@ -13,6 +13,7 @@ internal static class UserInterface
 {
     public static void InitiateUI() // Initiates the User Interface, calls for input
     {
+
         WelcomeMessage();
         GetInput();
 

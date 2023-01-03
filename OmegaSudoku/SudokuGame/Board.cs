@@ -32,6 +32,12 @@ internal class Board
         }
     }
 
+    public Cell this[int row, int col]
+    {
+        get { return board[row,col]; }
+        set { board[row,col] = value; }
+    }
+
     public void PrintBoard()
     {
         Console.WriteLine(ToString());
@@ -140,9 +146,9 @@ internal class Board
     {
         var iBox = row / BoxSize;
         var jBox = col / BoxSize;
-        for (int i = iBox * BoxSize; i < iBox + BoxSize; i++)
+        for (int i = iBox * BoxSize; i < (iBox +1) *BoxSize; i++)
         {
-            for (int j = jBox * BoxSize; j < jBox + BoxSize; j++)
+            for (int j = jBox * BoxSize; j < (jBox +1)* BoxSize; j++)
             {
                 yield return board[i, j];
             }
