@@ -32,10 +32,10 @@ internal class Board
         }
     }
 
-    public Cell this[int row, int col]
+    public int this[int row, int col]
     {
-        get { return board[row,col]; }
-        set { board[row,col] = value; }
+        get { return board[row,col].Value - '0'; }
+        set { board[row,col].Value = (char)(value +'0'); }
     }
 
     public void PrintBoard()
