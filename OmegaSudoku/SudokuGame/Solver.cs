@@ -47,7 +47,7 @@ internal class Solver
     {
         // check row using bitmask
         int rowMask = 0;
-        for (int i = 0; i < 9; i++)
+        for (int i = 0; i < gameBoard.BoardSize; i++)
         {
             rowMask |= 1 << gameBoard[row, i];
         }
@@ -58,7 +58,7 @@ internal class Solver
 
         // check col using bitmask
         int colMask = 0;
-        for (int i = 0; i < 9; i++)
+        for (int i = 0; i < gameBoard.BoardSize; i++)
         {
             colMask |= 1 << gameBoard[i, col];
         }
@@ -69,11 +69,11 @@ internal class Solver
 
         // check 3x3 grid using bitmask
         int gridMask = 0;
-        int startRow = row - row % 3;
-        int startCol = col - col % 3;
-        for (int i = 0; i < 3; i++)
+        int startRow = row - row % gameBoard.BoxSize;
+        int startCol = col - col % gameBoard.BoxSize;
+        for (int i = 0; i < gameBoard.BoxSize; i++)
         {
-            for (int j = 0; j < 3; j++)
+            for (int j = 0; j < gameBoard.BoxSize; j++)
             {
                 gridMask |= 1 << gameBoard[startRow + i, startCol + j];
             }
