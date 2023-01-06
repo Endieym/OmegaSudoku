@@ -14,6 +14,25 @@ internal class Solver
     public Solver(Board gameBoard)
     {
         this.gameBoard = gameBoard;
+        MarkingOptimization(); // first optimizations -> marks possible values
+    }
+
+    public void MarkingOptimization() // Marks every possible value in each cell.
+    {
+        for (int row = 0; row < gameBoard.BoardSize; row++)
+        {
+            for (int col = 0; col < gameBoard.BoardSize; col++)
+            {
+                if (gameBoard[row,col] != 0)
+                {
+                    gameBoard.UpdateRow(row, gameBoard[row, col]);  // updats entire row
+                    gameBoard.UpdateCol(col, gameBoard[row, col]);
+                    gameBoard.UpdateBox(row, col, gameBoard[row, col]);
+
+                }
+
+            }
+        }
     }
     
     public bool BacktrackSolve()
@@ -26,17 +45,22 @@ internal class Solver
                 {
                     for (int i = 1; i <= gameBoard.BoardSize; i++)
                     {
-                        if(IsValidBitwise(row,col, i)){
+                       
+                        if (IsValidBitwise(row, col, i))
+                        {
                             gameBoard[row, col] = i;
 
                             if (BacktrackSolve())
                                 return true;
-                           
+
                             gameBoard[row, col] = 0;
                         }
+
+
                     }
                     return false;
                 }
+                
                 
             }
         }
@@ -45,6 +69,12 @@ internal class Solver
 
     public bool IsValidBitwise(int row, int col, int num)
     {
+        if ((gameBoard[row*gameBoard.BoardSize+col].PossibleValue & (1 << num)) > 0)
+        {
+            return false;
+        }
+        
+        
         // check row using bitmask
         int rowMask = 0;
         for (int i = 0; i < gameBoard.BoardSize; i++)
@@ -67,16 +97,19 @@ internal class Solver
             return false;
         }
 
-        // check 3x3 grid using bitmask
+        // check box grid using bitmask
+
         int gridMask = 0;
-        int startRow = row - row % gameBoard.BoxSize;
-        int startCol = col - col % gameBoard.BoxSize;
-        for (int i = 0; i < gameBoard.BoxSize; i++)
+    
+        var iBox = row / gameBoard.BoxSize;
+        var jBox = col / gameBoard.BoxSize;
+        for (int i = iBox * gameBoard.BoxSize; i < (iBox + 1) * gameBoard.BoxSize; i++)
         {
-            for (int j = 0; j < gameBoard.BoxSize; j++)
+            for (int j = jBox * gameBoard.BoxSize; j < (jBox + 1) * gameBoard.BoxSize; j++)
             {
-                gridMask |= 1 << gameBoard[startRow + i, startCol + j];
+                gridMask |= 1 << gameBoard[i, j];
             }
+
         }
         if ((gridMask & (1 << num)) > 0)
         {
