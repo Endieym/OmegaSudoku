@@ -32,10 +32,40 @@ internal class Board
         }
     }
 
-    public Cell this[int row, int col]
+    public void UpdateRow(int row, int num)
     {
-        get { return board[row,col]; }
-        set { board[row,col] = value; }
+        var currRow = GetRow(row);
+        foreach (var cell in currRow)
+        {
+            cell.PossibleValue |= 1 << num;
+        }
+    }
+    public void UpdateCol(int col, int num)
+    {
+        var currCol = GetCol(col);
+        foreach (var cell in currCol)
+        {
+            cell.PossibleValue |= 1 << num;
+        }
+    }
+    public void UpdateBox(int row, int col, int num)
+    {
+        var currBox = GetBox(row, col);
+        foreach (var cell in currBox)
+        {
+            cell.PossibleValue |= 1 << num;
+        }
+    }
+
+    public int this[int row, int col]
+    {
+        get { return board[row,col].Value - '0'; }
+        set { board[row,col].Value = (char)(value +'0'); }
+    }
+    public Cell this[int index]
+    {
+        get { return board[index/this.BoardSize, index % this.BoardSize]; }
+        set { board[index / this.BoardSize, index % this.BoardSize].Value = value.Value; }
     }
 
     public void PrintBoard()
