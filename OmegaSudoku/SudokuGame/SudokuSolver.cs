@@ -18,7 +18,7 @@ internal static class SudokuSolver
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
         Solver solve = new Solver(board);
-        solve.SolveSudoku();
+        solve.BacktrackSolve();
         stopwatch.Stop();
         board.PrintBoard();    
         Console.WriteLine("Elapsed Time is {0} ms", stopwatch.ElapsedMilliseconds);
