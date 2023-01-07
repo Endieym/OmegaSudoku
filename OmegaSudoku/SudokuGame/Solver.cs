@@ -14,26 +14,101 @@ internal class Solver
     public Solver(Board gameBoard)
     {
         this.gameBoard = gameBoard;
-        MarkPossibilities(); // first optimizations -> marks possible values
     }
 
-    public void MarkPossibilities() // Marks every possible value in each cell.
+    // The function gets a specific index for a cell,
+    // and returns the number for which the current cell is an hidden cell for
+    public int HiddenCell(int row, int col) 
+    {
+        int hiddenValue = 0;
+        hiddenValue = HiddenRow(row, col);
+        if (hiddenValue != 0)
+            return hiddenValue;
+        
+        return 0;
+    }
+    
+    public int HiddenRow(int row, int col)
+    {
+        // check for hidden cell in row
+        var currRow = gameBoard.GetRow(row);
+        int rowBitmask = 0;
+
+        for (int i = 0; i <= gameBoard.BoardSize; i++) // create the initial bitmask- all 1's
+        {
+            rowBitmask |= (1 << i);
+        }
+        foreach (var r in currRow) // change the bitmask according to possibilites in the row
+        {
+            if (r.Value == '0' && r.Col != col)
+                rowBitmask &= r.PossibleValue;
+
+
+        }
+        for (int i = 1; i <= gameBoard.BoardSize; i++)
+        {
+            if ((gameBoard[row * gameBoard.BoardSize + col].PossibleValue & (1 << i)) == 0
+                && (rowBitmask & (1 << i)) != 0)
+                return i;
+
+        }
+        return 0;
+    }
+    public void ApplyConstraints()
     {
         for (int row = 0; row < gameBoard.BoardSize; row++)
         {
             for (int col = 0; col < gameBoard.BoardSize; col++)
             {
-                if (gameBoard[row,col] != 0)
-                {
-                    gameBoard.UpdateRow(row, gameBoard[row, col]);  // updates entire row
-                    gameBoard.UpdateCol(col, gameBoard[row, col]);
-                    gameBoard.UpdateBox(row, col, gameBoard[row, col]);
-
-                }
+                SudokuStrategies.UseStrategies(row, col, gameBoard);
 
             }
         }
+        
     }
+
+    // A function to solve the puzzle using constraint propagation
+    public void ConstraintSolve()
+    {
+        // Keep applying constraints until no further progress can be made
+        bool progress;
+        do
+        {
+            ApplyConstraints();
+            progress = false;
+
+            // Look for cells that can only be filled with a single number (singles)
+            for (int i = 0; i < gameBoard.BoardSize; i++)
+            {
+                for (int j = 0; j < gameBoard.BoardSize; j++)
+                {
+                    if (gameBoard[i, j] == 0)
+                    {
+                        int count = 0;
+                        int value = 0;
+                        for (int k = 1; k <= gameBoard.BoardSize; k++)
+                        {
+                            if ((gameBoard[i *gameBoard.BoardSize + j].PossibleValue & (1 << k)) == 0)
+                            {
+                                count++;
+                                value = k;
+                            }
+                        }
+                        if (count == 1)
+                        {
+                            gameBoard[i, j] = value;
+                            SudokuStrategies.MarkPossibilities(i, j, value, gameBoard);
+                            progress = true;
+                            break;
+                        }
+                    }
+                }
+                if (progress)
+                    break;
+            }
+        } while (progress);
+    }
+
 
 
     public bool BacktrackSolve()
@@ -67,13 +142,14 @@ internal class Solver
         {
             return true;
         }
+
         int possibilities = gameBoard[row * gameBoard.BoardSize + col].PossibleValue;
         for (int num = 1; num <= gameBoard.BoardSize; num++)
         {
-            if ((possibilities & (1 << num)) == 0 &&IsValidBitwise(row, col, num)) 
+            if ((possibilities & (1 << num)) == 0 && IsValidBitwise(row, col, num)) 
             {
                 gameBoard[row, col] = num;
-                if (SolveSudoku())
+                if (BacktrackSolve())
                 {
                     // print(grid, row, col, num)
                     return true;

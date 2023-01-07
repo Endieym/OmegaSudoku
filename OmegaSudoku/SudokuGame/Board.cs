@@ -137,6 +137,7 @@ internal class Board
 
         }
     }
+
     public IEnumerable<Cell> GetCol(int col)
     {
         for (int i = 0; i < BoardSize; i++)
