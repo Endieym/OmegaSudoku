@@ -30,6 +30,8 @@ internal class Board
                 board[i, j] = new Cell(boardString[j + BoardSize * i], i, j);
             }
         }
+
+        
     }
 
     public void UpdateRow(int row, int num)

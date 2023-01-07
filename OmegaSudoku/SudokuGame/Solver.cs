@@ -14,10 +14,10 @@ internal class Solver
     public Solver(Board gameBoard)
     {
         this.gameBoard = gameBoard;
-        MarkingOptimization(); // first optimizations -> marks possible values
+        MarkPossibilities(); // first optimizations -> marks possible values
     }
 
-    public void MarkingOptimization() // Marks every possible value in each cell.
+    public void MarkPossibilities() // Marks every possible value in each cell.
     {
         for (int row = 0; row < gameBoard.BoardSize; row++)
         {
@@ -25,7 +25,7 @@ internal class Solver
             {
                 if (gameBoard[row,col] != 0)
                 {
-                    gameBoard.UpdateRow(row, gameBoard[row, col]);  // updats entire row
+                    gameBoard.UpdateRow(row, gameBoard[row, col]);  // updates entire row
                     gameBoard.UpdateCol(col, gameBoard[row, col]);
                     gameBoard.UpdateBox(row, col, gameBoard[row, col]);
 
@@ -34,45 +34,63 @@ internal class Solver
             }
         }
     }
-    
+
+
     public bool BacktrackSolve()
     {
-        for (int row = 0; row < gameBoard.BoardSize; row++)
+        int row = -1;
+        int col = -1;
+        bool isEmpty = true;
+
+        for (int i = 0; i < gameBoard.BoardSize; i++)
         {
-            for (int col = 0; col < gameBoard.BoardSize; col++)
+            for (int j = 0; j < gameBoard.BoardSize; j++)
             {
-                if (gameBoard[row, col] == 0)
+                if (gameBoard[i, j] == 0)
                 {
-                    for (int i = 1; i <= gameBoard.BoardSize; i++)
-                    {
-                       
-                        if (IsValidBitwise(row, col, i))
-                        {
-                            gameBoard[row, col] = i;
+                    row = i;
+                    col = j;
 
-                            if (BacktrackSolve())
-                                return true;
-
-                            gameBoard[row, col] = 0;
-                        }
-
-
-                    }
-                    return false;
+                    // we still have some remaining missing values in Sudoku
+                    isEmpty = false;
+                    break;
                 }
-                
-                
+            }
+            if (!isEmpty)
+            {
+                break;
             }
         }
-        return true;
+
+        // no empty space left
+        if (isEmpty)
+        {
+            return true;
+        }
+        int possibilities = gameBoard[row * gameBoard.BoardSize + col].PossibleValue;
+        for (int num = 1; num <= gameBoard.BoardSize; num++)
+        {
+            if ((possibilities & (1 << num)) == 0 &&IsValidBitwise(row, col, num)) 
+            {
+                gameBoard[row, col] = num;
+                if (SolveSudoku())
+                {
+                    // print(grid, row, col, num)
+                    return true;
+                }
+                else
+                {
+                    // mark cell as empty (with 0)
+                   gameBoard[row, col] = 0;
+                }
+            }
+        }
+        return false;
     }
 
     public bool IsValidBitwise(int row, int col, int num)
     {
-        if ((gameBoard[row*gameBoard.BoardSize+col].PossibleValue & (1 << num)) > 0)
-        {
-            return false;
-        }
+       
         
         
         // check row using bitmask

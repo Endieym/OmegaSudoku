@@ -12,7 +12,7 @@ internal class Cell
     {
         Value = value;
         Row = row;
-        Col = col;
+        Col = col;   
         PossibleValue = 0;
 
     }

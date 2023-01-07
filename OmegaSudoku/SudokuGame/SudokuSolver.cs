@@ -15,11 +15,10 @@ internal static class SudokuSolver
         Board board = new(ValidatedInput, BoardSize);
 
         board.PrintBoard();
-        InitialBoardValidation(board);
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
         Solver solve = new Solver(board);
-        solve.BacktrackSolve();
+        solve.SolveSudoku();
         stopwatch.Stop();
         board.PrintBoard();    
         Console.WriteLine("Elapsed Time is {0} ms", stopwatch.ElapsedMilliseconds);
