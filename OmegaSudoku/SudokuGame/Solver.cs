@@ -54,6 +54,31 @@ internal class Solver
         }
         return 0;
     }
+    public void changePossibilites(int row, int col,
+        IEnumerable<int> rowPossibilites,
+        IEnumerable<int> colPossibilites,
+        IEnumerable<int> boxPossibilites)
+    {
+        var currRow = gameBoard.GetRow(row);
+        int i = 0;
+        foreach(var r in currRow)
+        {
+            r.PossibleValue = rowPossibilites.ElementAt(i++);
+        }
+        var currCol = gameBoard.GetCol(col);
+        i = 0;
+        foreach (var c in currCol)
+        {
+            c.PossibleValue = colPossibilites.ElementAt(i++);
+        }
+        var currBox = gameBoard.GetBox(row, col);
+        i = 0;
+        foreach (var b in currBox)
+        {
+            b.PossibleValue = boxPossibilites.ElementAt(i++);
+        }
+
+    }
     public void ApplyConstraints()
     {
         for (int row = 0; row < gameBoard.BoardSize; row++)
@@ -149,6 +174,11 @@ internal class Solver
             if ((possibilities & (1 << num)) == 0 && IsValidBitwise(row, col, num)) 
             {
                 gameBoard[row, col] = num;
+                var rowPossibility = gameBoard.GetRowPossibilites(row);
+                var colPossibility = gameBoard.GetColPossibilites(col);
+                var boxPossibility = gameBoard.GetBoxPossibilites(row, col);
+                SudokuStrategies.MarkPossibilities(row, col, num, gameBoard);
+
                 if (BacktrackSolve())
                 {
                     // print(grid, row, col, num)
@@ -157,6 +187,7 @@ internal class Solver
                 else
                 {
                     // mark cell as empty (with 0)
+                    changePossibilites(row, col, rowPossibility, colPossibility, boxPossibility);
                    gameBoard[row, col] = 0;
                 }
             }

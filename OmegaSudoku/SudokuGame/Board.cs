@@ -137,6 +137,15 @@ internal class Board
 
         }
     }
+    public IEnumerable<int> GetRowPossibilites(int row)
+    {
+        for (int i = 0; i < BoardSize; i++)
+        {
+
+            yield return board[row, i].PossibleValue;
+
+        }
+    }
 
     public IEnumerable<Cell> GetCol(int col)
     {
@@ -144,6 +153,15 @@ internal class Board
         {
 
             yield return board[i, col];
+
+        }
+    }
+    public IEnumerable<int> GetColPossibilites(int col)
+    {
+        for (int i = 0; i < BoardSize; i++)
+        {
+
+            yield return board[i, col].PossibleValue;
 
         }
     }
@@ -184,6 +202,20 @@ internal class Board
             for (int j = jBox * BoxSize; j < (jBox +1)* BoxSize; j++)
             {
                 yield return board[i, j];
+            }
+
+        }
+    }
+
+    public IEnumerable<int> GetBoxPossibilites(int row, int col)
+    {
+        var iBox = row / BoxSize;
+        var jBox = col / BoxSize;
+        for (int i = iBox * BoxSize; i < (iBox + 1) * BoxSize; i++)
+        {
+            for (int j = jBox * BoxSize; j < (jBox + 1) * BoxSize; j++)
+            {
+                yield return board[i, j].PossibleValue;
             }
 
         }
