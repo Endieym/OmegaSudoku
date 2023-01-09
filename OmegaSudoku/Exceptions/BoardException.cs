@@ -40,4 +40,9 @@ internal class BoxException : BoardException
 
 }
 
+internal class UnsolvableBoardException : BoardException
+{
+    public UnsolvableBoardException() :base("Board is unsolvable!") { }
+}
+
 

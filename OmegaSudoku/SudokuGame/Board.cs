@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OmegaSudoku.SudokuGame;
 
-internal class Board
+internal class Board : ICloneable
 {
     private Cell[,] board;
     public int BoardSize;
@@ -33,7 +33,7 @@ internal class Board
 
         
     }
-
+    
     public void UpdateRow(int row, int num)
     {
         var currRow = GetRow(row);
@@ -221,6 +221,18 @@ internal class Board
         }
     }
 
-
-
+    public object Clone()
+    {
+        Board temp = new Board();
+        temp.BoxSize = this.BoxSize;
+        temp.BoardSize = this.BoardSize;
+        for(int i = 0; i < this.BoxSize; i++)
+        {
+            for(int j = 0; j < this.BoxSize; j++)
+            {
+                temp.board[i, j] = this.board[i, j];
+            }
+        }
+        return temp;
+    }
 }
