@@ -15,46 +15,7 @@ internal class Solver
     {
         this.gameBoard = gameBoard;
     }
-
-    // The function gets a specific index for a cell,
-    // and returns the number for which the current cell is an hidden cell for
-    public int HiddenCell(int row, int col) 
-    {
-        int hiddenValue = 0;
-        hiddenValue = HiddenRow(row, col);
-        if (hiddenValue != 0)
-            return hiddenValue;
-        
-        return 0;
-    }
-    
-    public int HiddenRow(int row, int col)
-    {
-        // check for hidden cell in row
-        var currRow = gameBoard.GetRow(row);
-        int rowBitmask = 0;
-
-        for (int i = 0; i <= gameBoard.BoardSize; i++) // create the initial bitmask- all 1's
-        {
-            rowBitmask |= (1 << i);
-        }
-        foreach (var r in currRow) // change the bitmask according to possibilites in the row
-        {
-            if (r.Value == '0' && r.Col != col)
-                rowBitmask &= r.PossibleValue;
-
-
-        }
-        for (int i = 1; i <= gameBoard.BoardSize; i++)
-        {
-            if ((gameBoard[row * gameBoard.BoardSize + col].PossibleValue & (1 << i)) == 0
-                && (rowBitmask & (1 << i)) != 0)
-                return i;
-
-        }
-        return 0;
-    }
-    public void changePossibilites(int row, int col,
+    public void ChangePossibilites(int row, int col,
         IEnumerable<int> rowPossibilites,
         IEnumerable<int> colPossibilites,
         IEnumerable<int> boxPossibilites)
@@ -174,10 +135,6 @@ internal class Solver
             if ((possibilities & (1 << num)) == 0 && IsValidBitwise(row, col, num)) 
             {
                 gameBoard[row, col] = num;
-                var rowPossibility = gameBoard.GetRowPossibilites(row);
-                var colPossibility = gameBoard.GetColPossibilites(col);
-                var boxPossibility = gameBoard.GetBoxPossibilites(row, col);
-                SudokuStrategies.MarkPossibilities(row, col, num, gameBoard);
 
                 if (BacktrackSolve())
                 {
@@ -187,13 +144,13 @@ internal class Solver
                 else
                 {
                     // mark cell as empty (with 0)
-                    changePossibilites(row, col, rowPossibility, colPossibility, boxPossibility);
+                   
                    gameBoard[row, col] = 0;
                 }
             }
         }
         return false;
-    }
+    }    
 
     public bool IsValidBitwise(int row, int col, int num)
     {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OmegaSudoku.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,8 @@ internal static class SudokuStrategies
         }
         else
         {
+            if (((gameBoard[row * gameBoard.BoardSize + col].PossibleValue + 2) & 1) == 1)
+                throw new UnsolvableBoardException();
             int hidden = HiddenCell(row, col, gameBoard);
             if(hidden != 0)
             

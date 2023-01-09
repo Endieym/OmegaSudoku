@@ -77,7 +77,22 @@ internal static class UserInterface
             StringValidation.Validate(input);
             Console.WriteLine("Success!");
 
-            SudokuSolver.SolveSuduko(input, (int)Math.Sqrt(input.Length));
+            if (SudokuSolver.SolveSuduko(input, (int)Math.Sqrt(input.Length)))
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Solved!");
+                Console.ResetColor();
+            }
+
+                
+                
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Not solved! try another board");
+                Console.ResetColor();
+                InitiateUI();
+            }
 
         }
         catch (InputException ie)
@@ -85,7 +100,7 @@ internal static class UserInterface
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(ie.Message);
             Console.ResetColor();
-            WelcomeMessage();
+            InitiateUI();
 
         }
 
