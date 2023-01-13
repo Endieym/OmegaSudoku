@@ -12,51 +12,170 @@ internal class Board : ICloneable
     public int BoardSize;
     public int BoxSize;
 
-    public Board()
+    
+
+    public Board(int boardSize)
     {
-        BoardSize = 0;
-        BoxSize = 0;
-        board = new Cell[BoardSize, BoardSize];
+        this.BoardSize = boardSize;
+        this.BoxSize = (int)Math.Sqrt(boardSize);
+        this.board = new Cell[BoardSize, BoardSize];
     }
     public Board(string boardString, int boardSize)
     {
-        BoardSize = boardSize;
-        BoxSize = (int)Math.Sqrt(boardSize);
-        board = new Cell[BoardSize, BoardSize];
+        this.BoardSize = boardSize;
+        this.BoxSize = (int)Math.Sqrt(boardSize);
+        this.board = new Cell[BoardSize, BoardSize];
+        this.PossibleProtection = new Dictionary<int, int>[BoardSize,BoardSize];
+        int possibleBitmask = 0;
+        
         for (int i = 0; i < BoardSize; i++)
         {
             for (int j = 0; j < BoardSize; j++)
             {
+                this.PossibleProtection[i, j] = new Dictionary<int, int>();
                 board[i, j] = new Cell(boardString[j + BoardSize * i], i, j);
+                for (int k = 1; k <= BoardSize; k++)
+                    this.PossibleProtection[i, j].Add(k, 0);
             }
         }
 
         
     }
-    
+    public Dictionary<int,int>[,] PossibleProtection { get; set; }
+
+
+    public void UpdateCell(int row, int col, int num)
+    {
+        UpdateRow(row, num);
+        UpdateCol(col, num);
+        UpdateBox(row, col, num);
+
+
+        //int possibleMask = 0;
+
+
+        //var currRow = GetRow(row);
+        //var currCol = GetCol(col);
+        //var currBox = GetBox(row, col);
+        //int i = 0;
+        //while (i < BoardSize)
+        //{
+        //    possibleMask |= (1 << currRow.ElementAt(i).Value);
+        //    possibleMask |= (1 << currCol.ElementAt(i).Value);
+        //    possibleMask |= (1 << currBox.ElementAt(i++).Value);
+
+        //}
+
+
+    }
+
     public void UpdateRow(int row, int num)
     {
         var currRow = GetRow(row);
-        foreach (var cell in currRow)
+        if (num >= 0)
         {
-            cell.PossibleValue |= 1 << num;
+            foreach (var cell in currRow)
+            {
+                if (cell.Value == '0' )
+                {
+                    cell.PossibleValue |= (1 << num);
+                    PossibleProtection[row, cell.Col][num]++; 
+                }
+
+            }
         }
+        else
+        {
+            foreach (var cell in currRow)
+            {
+                if (cell.Value == '0')
+                {
+                    if (PossibleProtection[row, cell.Col][-num] > 0)
+                        PossibleProtection[row, cell.Col][-num]--;
+
+                    if (PossibleProtection[row, cell.Col][-num] == 0)
+                        cell.PossibleValue &= ~(1 << (-num));
+
+
+                }
+
+            }
+        }
+        
     }
     public void UpdateCol(int col, int num)
     {
         var currCol = GetCol(col);
-        foreach (var cell in currCol)
+        if(num >= 0)
         {
-            cell.PossibleValue |= 1 << num;
+            foreach (var cell in currCol)
+            {
+                if (cell.Value == '0')
+                {
+                    PossibleProtection[cell.Row, col][num]++;
+                    cell.PossibleValue |= (1 << num);
+
+                }
+            }
         }
+        else
+        {
+            foreach (var cell in currCol)
+            {
+                if (cell.Value == '0')
+                {
+
+                    if (PossibleProtection[cell.Row, col][-num]>0)
+                        PossibleProtection[cell.Row, col][-num]--;
+
+                    if (PossibleProtection[cell.Row, col][-num] == 0)
+                        cell.PossibleValue &= ~(1 << (-num));
+                }
+                    
+
+            }
+        }
+        
     }
     public void UpdateBox(int row, int col, int num)
     {
         var currBox = GetBox(row, col);
-        foreach (var cell in currBox)
+        if (num >= 0)
         {
-            cell.PossibleValue |= 1 << num;
+            foreach (var cell in currBox)
+            {
+                if(cell.Value == '0')
+                {
+                    if (cell.Row != row && cell.Col != col)
+                    {
+                        PossibleProtection[cell.Row, cell.Col][num]++;
+                        cell.PossibleValue |= (1 << num);
+
+                    }
+                }
+                
+            }
         }
+        else
+        {
+            foreach (var cell in currBox)
+            {
+                if(cell.Value == '0')
+                {
+                    if(cell.Row != row && cell.Col != col)
+                    {
+                        if (PossibleProtection[cell.Row, cell.Col][-num] > 0)
+                            PossibleProtection[cell.Row, cell.Col][-num]--;
+
+                        if (PossibleProtection[cell.Row, cell.Col][-num] == 0)
+                            cell.PossibleValue &= ~(1 << (-num));
+
+                    }
+                }
+                
+            }
+        }
+        
     }
 
     public int this[int row, int col]
@@ -137,7 +256,7 @@ internal class Board : ICloneable
 
         }
     }
-    public IEnumerable<int> GetRowPossibilites(int row)
+    public IEnumerable<long> GetRowPossibilites(int row)
     {
         for (int i = 0; i < BoardSize; i++)
         {
@@ -223,14 +342,12 @@ internal class Board : ICloneable
 
     public object Clone()
     {
-        Board temp = new Board();
-        temp.BoxSize = this.BoxSize;
-        temp.BoardSize = this.BoardSize;
-        for(int i = 0; i < this.BoxSize; i++)
+        Board temp = new Board(this.BoardSize);
+        for(int i = 0; i < this.BoardSize; i++)
         {
-            for(int j = 0; j < this.BoxSize; j++)
+            for(int j = 0; j < this.BoardSize; j++)
             {
-                temp.board[i, j] = this.board[i, j];
+                temp.board[i, j] = (Cell)this.board[i, j].Clone();
             }
         }
         return temp;
