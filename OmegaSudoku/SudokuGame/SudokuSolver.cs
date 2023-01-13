@@ -18,11 +18,12 @@ internal static class SudokuSolver
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
         Solver solve = new Solver(board);
-
+        Board solvedBoard = board;
         try
         {
             solve.ConstraintSolve();
             solve.BacktrackSolve();
+            solvedBoard = solve.GetBoard();
         }
         catch(BoardException be)
         {
@@ -35,7 +36,7 @@ internal static class SudokuSolver
         {
             stopwatch.Stop();
             Console.WriteLine("Solved Board");
-            board.PrintBoard();
+            solvedBoard.PrintBoard();
             printTime(stopwatch);
         }
 

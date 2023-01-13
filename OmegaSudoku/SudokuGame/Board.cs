@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace OmegaSudoku.SudokuGame;
 
-internal class Board : ICloneable
+internal class Board : ICloneable, IDisposable
 {
     private Cell[,] board;
     public int BoardSize;
     public int BoxSize;
-
-    
+    private bool _disposed;
 
     public Board(int boardSize)
     {
@@ -25,17 +24,13 @@ internal class Board : ICloneable
         this.BoardSize = boardSize;
         this.BoxSize = (int)Math.Sqrt(boardSize);
         this.board = new Cell[BoardSize, BoardSize];
-        this.PossibleProtection = new Dictionary<int, int>[BoardSize,BoardSize];
-        int possibleBitmask = 0;
         
         for (int i = 0; i < BoardSize; i++)
         {
             for (int j = 0; j < BoardSize; j++)
             {
-                this.PossibleProtection[i, j] = new Dictionary<int, int>();
                 board[i, j] = new Cell(boardString[j + BoardSize * i], i, j);
-                for (int k = 1; k <= BoardSize; k++)
-                    this.PossibleProtection[i, j].Add(k, 0);
+                
             }
         }
 
@@ -79,7 +74,6 @@ internal class Board : ICloneable
                 if (cell.Value == '0' )
                 {
                     cell.PossibleValue |= (1 << num);
-                    PossibleProtection[row, cell.Col][num]++; 
                 }
 
             }
@@ -90,11 +84,9 @@ internal class Board : ICloneable
             {
                 if (cell.Value == '0')
                 {
-                    if (PossibleProtection[row, cell.Col][-num] > 0)
-                        PossibleProtection[row, cell.Col][-num]--;
-
-                    if (PossibleProtection[row, cell.Col][-num] == 0)
-                        cell.PossibleValue &= ~(1 << (-num));
+                  
+                    
+                     cell.PossibleValue &= ~(1 << (-num));
 
 
                 }
@@ -112,7 +104,7 @@ internal class Board : ICloneable
             {
                 if (cell.Value == '0')
                 {
-                    PossibleProtection[cell.Row, col][num]++;
+                    
                     cell.PossibleValue |= (1 << num);
 
                 }
@@ -125,11 +117,8 @@ internal class Board : ICloneable
                 if (cell.Value == '0')
                 {
 
-                    if (PossibleProtection[cell.Row, col][-num]>0)
-                        PossibleProtection[cell.Row, col][-num]--;
-
-                    if (PossibleProtection[cell.Row, col][-num] == 0)
-                        cell.PossibleValue &= ~(1 << (-num));
+                   
+                     cell.PossibleValue &= ~(1 << (-num));
                 }
                     
 
@@ -148,7 +137,6 @@ internal class Board : ICloneable
                 {
                     if (cell.Row != row && cell.Col != col)
                     {
-                        PossibleProtection[cell.Row, cell.Col][num]++;
                         cell.PossibleValue |= (1 << num);
 
                     }
@@ -164,10 +152,7 @@ internal class Board : ICloneable
                 {
                     if(cell.Row != row && cell.Col != col)
                     {
-                        if (PossibleProtection[cell.Row, cell.Col][-num] > 0)
-                            PossibleProtection[cell.Row, cell.Col][-num]--;
-
-                        if (PossibleProtection[cell.Row, cell.Col][-num] == 0)
+                      
                             cell.PossibleValue &= ~(1 << (-num));
 
                     }
@@ -346,10 +331,74 @@ internal class Board : ICloneable
         for(int i = 0; i < this.BoardSize; i++)
         {
             for(int j = 0; j < this.BoardSize; j++)
-            {
+            {    
                 temp.board[i, j] = (Cell)this.board[i, j].Clone();
             }
         }
         return temp;
     }
+
+    public void Dispose()
+    {
+        for (int i = 0; i < this.BoardSize; i++)
+        {
+            for (int j = 0; j < this.BoardSize; j++)
+            {
+                this.board[i, j] = null;
+            }
+        }
+        // Dispose of unmanaged resources.
+        Dispose(true);
+        // Suppress finalization.
+        GC.SuppressFinalize(this);
+    }
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        if (disposing)
+        {
+            // TODO: dispose managed state (managed objects).
+        }
+
+        // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+        // TODO: set large fields to null.
+
+        _disposed = true;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        var other = obj as Board;
+        if (other == null || this.BoardSize != other.BoardSize)
+            return false;
+
+        for (int i = 0; i < this.BoardSize; i++)
+        {
+            for (int j = 0; j < this.BoardSize; j++)
+            {
+                if (!this.board[i, j].Equals(other.board[i, j]))
+                    return false;
+            }
+        }
+        return true;
+    }
+    public override int GetHashCode()
+    {
+        var hashCode = -1749122894;
+        hashCode = hashCode * -1521134295 + this.BoardSize.GetHashCode();
+        hashCode = hashCode * -1521134295 + this.BoxSize.GetHashCode();
+        for (int i = 0; i < this.BoardSize; i++)
+        {
+            for (int j = 0; j < this.BoardSize; j++)
+            {
+                hashCode = hashCode * -1521134295 + this.board[i, j].GetHashCode();
+            }
+        }
+        return hashCode;
+    }
 }
+

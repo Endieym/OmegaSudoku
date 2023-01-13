@@ -9,11 +9,18 @@ namespace OmegaSudoku.SudokuGame;
 internal class Solver
 {
 
-    private readonly Board gameBoard;
+    private Board gameBoard;
+    private Stack<Board> boardStack;
 
     public Solver(Board gameBoard)
     {
+
         this.gameBoard = gameBoard;
+        this.boardStack = new Stack<Board>();
+    }
+    public Board GetBoard()
+    {
+        return this.gameBoard;
     }
     public void ChangePossibilites(int row, int col,
         IEnumerable<int> rowPossibilites,
@@ -166,25 +173,34 @@ internal class Solver
             return true;
         }
 
-        long possibilities = gameBoard[row * gameBoard.BoardSize + col].PossibleValue;
+        int possibilities = gameBoard[row * gameBoard.BoardSize + col].PossibleValue;
         for (int num = 1; num <= gameBoard.BoardSize; num++)
         {
-            if ((possibilities & (1 << num)) == 0 && IsValidBitwise(row,col,num))
+            if (IsValidBitwise(row,col,num))
             {
+                Board tempBoard = (Board)gameBoard.Clone();
+                boardStack.Push(tempBoard);
                 gameBoard[row, col] = num;
-                gameBoard.UpdateCell(row, col, num);
-                
+                SudokuStrategies.UseStrategies(row, col, gameBoard);
+
+
 
                 if (BacktrackSolve())
                 {
                     // print(grid, row, col, num)
+                    boardStack.Pop();
                     return true;
                 }
                 else
                 {
                     // mark cell as empty (with 0)
-                    gameBoard.UpdateCell(row, col, -num);
-                    gameBoard[row, col] = 0;
+
+                    IDisposable disposable = gameBoard as IDisposable;
+                    if (disposable != null)
+                        disposable.Dispose();
+                    gameBoard = boardStack.Pop();
+
+
 
                 }
             }
