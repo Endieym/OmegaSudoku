@@ -147,6 +147,7 @@ internal class Solver
     {
         int row = -1;
         int col = -1;
+        int minRemainingValues = int.MaxValue;
         bool isEmpty = true;
         for (int i = 0; i < gameBoard.BoardSize; i++)
         {
@@ -156,15 +157,32 @@ internal class Solver
                 {
                     row = i;
                     col = j;
+                    int remainingValues = CountSetBits(gameBoard[i*gameBoard.BoardSize+i].PossibleValue);
+                    int degree = 0;
+                     
+                    // MRV 
+                    if (remainingValues < minRemainingValues)
+                    {
+                        minRemainingValues = remainingValues;
+                        row = i;
+                        col = j;
+                    }
+                    if(remainingValues == minRemainingValues)
+                    {
+                        int prevDegree = CalculateDegree(row, col);
+                        int currDegree = CalculateDegree(i, j);
+                        if (currDegree > prevDegree)
+                        {
+                            row = i;
+                            col = i;
+                        }
+                                    
+                    }
                     // we still have some remaining missing values in Sudoku
                     isEmpty = false;
-                    break;
                 }
             }
-            if (!isEmpty)
-            {
-                break;
-            }
+            
         }
 
         // no empty space left
@@ -176,12 +194,12 @@ internal class Solver
         int possibilities = gameBoard[row * gameBoard.BoardSize + col].PossibleValue;
         for (int num = 1; num <= gameBoard.BoardSize; num++)
         {
-            if (IsValidBitwise(row,col,num))
+            if ((possibilities & (1 << num)) == 0)
             {
                 Board tempBoard = (Board)gameBoard.Clone();
                 boardStack.Push(tempBoard);
                 gameBoard[row, col] = num;
-                SudokuStrategies.UseStrategies(row, col, gameBoard);
+                gameBoard.UpdateCell(row, col, num);
 
 
 
@@ -206,8 +224,31 @@ internal class Solver
             }
         }
         return false;
-    } 
-      
+    }
+
+
+    private int CalculateDegree(int row, int col)
+    {
+        int degree = 0;
+        for (int i = 0; i < gameBoard.BoardSize; i++)
+        {
+            if (gameBoard[row, i] == 0)
+            {
+                degree++;
+            }
+            if (gameBoard[i, col] == 0)
+            {
+                degree++;
+            }
+        }
+        var currBox = gameBoard.GetBox(row,col);
+        foreach(var cell in currBox)
+        {
+            if (cell.Value == 0)
+                degree++;
+        }
+        return degree;
+    }
 
     public bool IsValidBitwise(int row, int col, int num)
     {
@@ -257,6 +298,17 @@ internal class Solver
 
         // number is valid
         return true;
+    }
+
+    public int CountSetBits(int n)
+    {
+        int count = 0;
+        while (n > 0)
+        {
+            count += n & 1;
+            n >>= 1;
+        }
+        return gameBoard.BoardSize-count;
     }
     public bool IsValid(int row, int col, char c)
     {

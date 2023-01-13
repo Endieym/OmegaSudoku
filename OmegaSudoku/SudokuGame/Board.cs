@@ -11,7 +11,7 @@ internal class Board : ICloneable, IDisposable
     private Cell[,] board;
     public int BoardSize;
     public int BoxSize;
-    private bool _disposed;
+    private bool disposed = false;
 
     public Board(int boardSize)
     {
@@ -340,36 +340,27 @@ internal class Board : ICloneable, IDisposable
 
     public void Dispose()
     {
-        for (int i = 0; i < this.BoardSize; i++)
-        {
-            for (int j = 0; j < this.BoardSize; j++)
-            {
-                this.board[i, j] = null;
-            }
-        }
-        // Dispose of unmanaged resources.
         Dispose(true);
-        // Suppress finalization.
         GC.SuppressFinalize(this);
     }
+
     protected virtual void Dispose(bool disposing)
     {
-        if (_disposed)
-        {
+        if (disposed)
             return;
-        }
 
         if (disposing)
         {
-            // TODO: dispose managed state (managed objects).
+            // dispose managed resources
+            for (int i = 0; i < BoardSize; i++)
+            {
+                for (int j = 0; j < BoardSize; j++)
+                {
+                    board[i, j] = null;
+                }
+            }
         }
-
-        // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-        // TODO: set large fields to null.
-
-        _disposed = true;
     }
-
     public override bool Equals(object? obj)
     {
         var other = obj as Board;

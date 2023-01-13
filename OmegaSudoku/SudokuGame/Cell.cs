@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OmegaSudoku.SudokuGame;
 
-internal class Cell : ICloneable
+internal class Cell : ICloneable, IDisposable
 {
     public Cell(char value, int row, int col)
     {
@@ -24,6 +24,8 @@ internal class Cell : ICloneable
     public int Row { get; set; }
 
     public int Col { get; set; }
+
+    public bool IsDisposed { get; set; }
 
     public object Clone()
     {
@@ -52,4 +54,32 @@ internal class Cell : ICloneable
         hashCode = hashCode * -1521134295 + PossibleValue.GetHashCode();
         return hashCode;
     }
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!IsDisposed)
+        {
+            if (disposing)
+            {
+                // Dispose managed resources
+                // ...
+            }
+
+            // Dispose unmanaged resources
+            // ...
+
+            IsDisposed = true;
+        }
+    }
+
+    ~Cell()
+    {
+        Dispose(false);
+    }
 }
+
