@@ -81,6 +81,7 @@ internal class Solver
                             }
                         }
                         if (count == 1)
+                            
                         {
                             gameBoard[i, j] = value;
                             SudokuStrategies.MarkPossibilities(i, j, value, gameBoard);
@@ -94,6 +95,44 @@ internal class Solver
             }
         } while (progress);
     }
+    //private int GetPossibilites(int row, int col)
+    //{
+    //    var currRow = gameBoard.GetRow(row);
+    //    int possibilites = 0;
+    //    foreach(var r in currRow)
+    //    {
+    //        if (r.Value != 0)
+    //            possibilites |= (1 << r.Value);
+    //    }
+    //    var currCol = gameBoard.GetCol(col);
+    //    foreach (var c in currCol)
+    //    {
+    //        if (c.Value != 0)
+    //            possibilites |= (1 << c.Value);
+    //    }
+    //    var currBox = gameBoard.GetBox(row, col);
+    //    foreach (var b in currBox)
+    //    {
+    //        if (b.Value != 0)
+    //            possibilites |= (1 << b.Value);
+    //    }
+    //    return possibilites;
+
+    //}
+    //private int CountPossibilites(int possibleValues)
+    //{
+    //    int count = 0;
+    //    for (int i = 1; i < gameBoard.BoardSize; i++)
+    //    {
+    //        if ((count & (1 << i)) == 0)
+    //        {
+    //            count++;
+    //        }
+    //    }
+
+    //    return count;
+    //}
+
 
 
 
@@ -102,7 +141,6 @@ internal class Solver
         int row = -1;
         int col = -1;
         bool isEmpty = true;
-
         for (int i = 0; i < gameBoard.BoardSize; i++)
         {
             for (int j = 0; j < gameBoard.BoardSize; j++)
@@ -111,7 +149,6 @@ internal class Solver
                 {
                     row = i;
                     col = j;
-
                     // we still have some remaining missing values in Sudoku
                     isEmpty = false;
                     break;
@@ -129,12 +166,14 @@ internal class Solver
             return true;
         }
 
-        int possibilities = gameBoard[row * gameBoard.BoardSize + col].PossibleValue;
+        long possibilities = gameBoard[row * gameBoard.BoardSize + col].PossibleValue;
         for (int num = 1; num <= gameBoard.BoardSize; num++)
         {
-            if ((possibilities & (1 << num)) == 0 && IsValidBitwise(row, col, num)) 
+            if ((possibilities & (1 << num)) == 0 && IsValidBitwise(row,col,num))
             {
                 gameBoard[row, col] = num;
+                gameBoard.UpdateCell(row, col, num);
+                
 
                 if (BacktrackSolve())
                 {
@@ -144,13 +183,15 @@ internal class Solver
                 else
                 {
                     // mark cell as empty (with 0)
-                   
-                   gameBoard[row, col] = 0;
+                    gameBoard.UpdateCell(row, col, -num);
+                    gameBoard[row, col] = 0;
+
                 }
             }
         }
         return false;
-    }    
+    } 
+      
 
     public bool IsValidBitwise(int row, int col, int num)
     {

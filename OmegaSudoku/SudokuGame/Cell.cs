@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OmegaSudoku.SudokuGame;
 
-internal class Cell
+internal class Cell : ICloneable
 {
     public Cell(char value, int row, int col)
     {
@@ -24,4 +24,9 @@ internal class Cell
     public int Row { get; set; }
 
     public int Col { get; set; }
+
+    public object Clone()
+    {
+        return new Cell(Value, Row, Col);
+    }
 }

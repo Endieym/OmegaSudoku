@@ -9,7 +9,7 @@ internal static class SudokuSolver
     public static bool SolveSuduko(string ValidatedInput, int BoardSize)
     {
         Board board = new(ValidatedInput, BoardSize);
-
+        Console.WriteLine("Original Board");
         board.PrintBoard();
         if (!InitialBoardValidation(board))
         {
@@ -34,6 +34,7 @@ internal static class SudokuSolver
         finally
         {
             stopwatch.Stop();
+            Console.WriteLine("Solved Board");
             board.PrintBoard();
             printTime(stopwatch);
         }
