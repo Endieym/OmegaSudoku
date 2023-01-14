@@ -1,4 +1,6 @@
-﻿using System;
+﻿using OmegaSudoku.SudokuGame.Algorithms.Backtracking;
+using OmegaSudoku.SudokuGame.Algorithms.ConstraintPropagation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -52,104 +54,23 @@ internal class Solver
         }
         
     }
+    public void Solve()
+    {
+        ConstraintSolve();
+        BacktrackSolve();
+    }
 
     // A function to solve the puzzle using constraint propagation
     public void ConstraintSolve()
     {
-        // Keep applying constraints until no further progress can be made
-        bool progress;
-        do
-        {
-            ApplyConstraints();
-            progress = false;
-
-            // Look for cells that can only be filled with a single number (singles)
-            for (int i = 0; i < gameBoard.BoardSize; i++)
-            {
-                for (int j = 0; j < gameBoard.BoardSize; j++)
-                {
-                    if (gameBoard[i, j] == 0)
-                    {
-                        int count = 0;
-                        int value = 0;
-                        for (int k = 1; k <= gameBoard.BoardSize; k++)
-                        {
-                            if ((gameBoard[i *gameBoard.BoardSize + j].PossibleValue & (1 << k)) == 0)
-                            {
-                                count++;
-                                value = k;
-                            }
-                        }
-                        if (count == 1)
-                        {
-                            gameBoard[i, j] = value;
-                            SudokuStrategies.MarkPossibilities(i, j, value, gameBoard);
-                            progress = true;
-                            break;
-                        }
-                    }
-                }
-                if (progress)
-                    break;
-            }
-        } while (progress);
+        ConstraintPropagation.ConstraintSolve(gameBoard);
     }
 
 
 
-    public bool BacktrackSolve()
+    public void BacktrackSolve()
     {
-        int row = -1;
-        int col = -1;
-        bool isEmpty = true;
-
-        for (int i = 0; i < gameBoard.BoardSize; i++)
-        {
-            for (int j = 0; j < gameBoard.BoardSize; j++)
-            {
-                if (gameBoard[i, j] == 0)
-                {
-                    row = i;
-                    col = j;
-
-                    // we still have some remaining missing values in Sudoku
-                    isEmpty = false;
-                    break;
-                }
-            }
-            if (!isEmpty)
-            {
-                break;
-            }
-        }
-
-        // no empty space left
-        if (isEmpty)
-        {
-            return true;
-        }
-
-        int possibilities = gameBoard[row * gameBoard.BoardSize + col].PossibleValue;
-        for (int num = 1; num <= gameBoard.BoardSize; num++)
-        {
-            if ((possibilities & (1 << num)) == 0 && IsValidBitwise(row, col, num)) 
-            {
-                gameBoard[row, col] = num;
-
-                if (BacktrackSolve())
-                {
-                    // print(grid, row, col, num)
-                    return true;
-                }
-                else
-                {
-                    // mark cell as empty (with 0)
-                   
-                   gameBoard[row, col] = 0;
-                }
-            }
-        }
-        return false;
+        Backtracking.BacktrackSolve(gameBoard);
     }    
 
     public bool IsValidBitwise(int row, int col, int num)
