@@ -11,7 +11,6 @@ internal class SparseMatrix
     public class Node      
     {
         public int Row { get; set; }
-        public int Col { get; set; }
         public Node Left { get; set; }
         public Node Right { get; set; }
         public Node Up { get; set; }
@@ -19,26 +18,26 @@ internal class SparseMatrix
         public Node Column { get; set; }
         public int Size { get; set; }
     }
-    private int rows;
-    private int cols;
+    private int rowSize;
+    private int colSize;
     public Node head;
-
-    public SparseMatrix(int rows, int cols)
+    public Node[] cols;
+    public SparseMatrix(int row, int col)
     {
-        this.rows = rows;
-        this.cols = cols;
-        head = new Node();
-        Node[] prevs = new Node[cols];
+        this.rowSize = row;
+        this.colSize = col;
+        this.head = new Node();
+        this.cols = new Node[col];
 
-        for(int i = 0; i < cols; i++)
+        for(int i = 0; i < col; i++)
         {
-            prevs[i] = new Node();
-            prevs[i].Column = prevs[i];
-            prevs[i].Size = 0;
-            prevs[i].Left = head;
-            prevs[i].Right = head.Right;
-            head.Right.Left = prevs[i];
-            head.Right = prevs[i];
+            cols[i] = new Node();
+            cols[i].Column = cols[i];
+            cols[i].Size = 0;
+            cols[i].Left = head;
+            cols[i].Right = head.Right;
+            head.Right.Left = cols[i];
+            head.Right = cols[i];
         }
         
 
@@ -47,7 +46,21 @@ internal class SparseMatrix
 
     public void AddNode(int row, int col)
     {
-
+        Node node = new Node();
+        node.Row = row;
+        node.Column = cols[col];
+        node.Column.Size++;
+        // Link the node to the column
+        node.Up = node.Column.Up;
+        node.Down = node.Column;
+        node.Up.Down = node;
+        node.Up = node;
+        // Link the node from the left and right
+        node.Left = node.Column.Left;
+        node.Right = node.Column.Right;
+        cols[col].Left.Right = cols[col];
+        cols[col].Right.Left = cols[col];
+        
     }
 
     
