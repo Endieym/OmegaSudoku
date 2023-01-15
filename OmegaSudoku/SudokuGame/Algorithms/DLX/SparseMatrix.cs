@@ -44,23 +44,71 @@ internal class SparseMatrix
 
     }
 
+    Node FindAbove(int row, int col)
+    {
+        Node temp, tempCol;
+        int i;
+
+        temp = head.Right;
+        while (--col != 0)
+        {
+            temp = temp.Right;
+
+
+        }
+        tempCol = temp;
+        while (temp.Down.Row < row && temp != tempCol)
+        {
+            temp = temp.Down;
+
+        }
+        return temp;
+
+
+    }
+
+    Node FindBefore(int row, int col)
+    {
+        Node temp, tempRow;
+        int i;
+
+        temp = head.Down;
+        while (--row != 0)
+        {
+            temp = temp.Down;
+
+        }
+        tempRow = temp;
+        while (temp.Right.Column != cols[col] && temp != tempRow)
+        {
+            temp = temp.Right;
+
+        }
+        return temp;
+
+
+    }
+
     public void AddNode(int row, int col)
     {
         Node node = new Node();
         node.Row = row;
         node.Column = cols[col];
         node.Column.Size++;
+        Node nodeBefore, nodeAbove;
+        nodeBefore= FindBefore(row, col);
+        nodeAbove = FindAbove(row, col);
         // Link the node to the column
-        node.Up = node.Column.Up;
-        node.Down = node.Column;
-        node.Up.Down = node;
-        node.Up = node;
+        node.Up = nodeAbove;
+        node.Down = nodeAbove.Down;
+        nodeAbove.Down.Up = node;
+        nodeAbove.Down = node;
         // Link the node from the left and right
-        node.Left = node.Column.Left;
-        node.Right = node.Column.Right;
-        cols[col].Left.Right = cols[col];
-        cols[col].Right.Left = cols[col];
-        
+        node.Left = nodeBefore;
+        node.Right = nodeBefore.Right;
+        nodeBefore.Right.Left = node;
+        nodeBefore.Right = node;
+
     }
 
     

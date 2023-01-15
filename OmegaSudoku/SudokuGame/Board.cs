@@ -221,18 +221,4 @@ internal class Board : ICloneable
         }
     }
 
-    public object Clone()
-    {
-        Board temp = new Board();
-        temp.BoxSize = this.BoxSize;
-        temp.BoardSize = this.BoardSize;
-        for(int i = 0; i < this.BoxSize; i++)
-        {
-            for(int j = 0; j < this.BoxSize; j++)
-            {
-                temp.board[i, j] = this.board[i, j];
-            }
-        }
-        return temp;
-    }
 }
