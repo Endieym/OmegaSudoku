@@ -18,28 +18,37 @@ internal class SparseMatrix
         public Node Column { get; set; }
         public int Size { get; set; }
     }
-    private int rowSize;
-    private int colSize;
+
     public Node head;
     public Node[] cols;
     public SparseMatrix(int row, int col)
     {
-        this.rowSize = row;
-        this.colSize = col;
+       
         this.head = new Node();
         this.cols = new Node[col];
-
+        this.head.Down = head;
+        this.head.Up = head;
         for(int i = 0; i < col; i++)
         {
             cols[i] = new Node();
             cols[i].Column = cols[i];
             cols[i].Size = 0;
-            cols[i].Left = head;
-            cols[i].Right = head.Right;
-            head.Right.Left = cols[i];
-            head.Right = cols[i];
+            if (i == 0)
+            {
+                head.Right = cols[i];
+                cols[i].Left = head;
+            }
+            else
+            {
+                cols[i - 1].Right = cols[i];
+                cols[i].Left = cols[i - 1];
+            }
+            cols[i].Down = cols[i];
+            cols[i].Up = cols[i];
+            cols[i].Right = head;
+
         }
-        
+
 
 
     }
@@ -72,16 +81,19 @@ internal class SparseMatrix
         Node temp, tempRow;
         int i;
 
-        temp = head.Down;
-        while (--row != 0)
-        {
-            temp = temp.Down;
-
-        }
-        tempRow = temp;
-        while (temp.Right.Column != cols[col] && temp != tempRow)
+        
+        temp = head;
+        while (temp.Right.Column != cols[col] && temp != head)
         {
             temp = temp.Right;
+
+        }
+
+        tempRow = temp;
+
+        while (temp.Down != tempRow && temp.Down.Row != row)
+        {
+            temp = temp.Down;
 
         }
         return temp;

@@ -1,5 +1,6 @@
 ﻿using OmegaSudoku.SudokuGame.Algorithms.Backtracking;
 using OmegaSudoku.SudokuGame.Algorithms.ConstraintPropagation;
+using OmegaSudoku.SudokuGame.Algorithms.DLX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,7 +58,7 @@ internal class Solver
     public void Solve()
     {
         ConstraintSolve();
-        BacktrackSolve();
+        SudokuReduction.Solve(gameBoard);
     }
 
     // A function to solve the puzzle using constraint propagation

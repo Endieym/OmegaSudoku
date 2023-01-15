@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OmegaSudoku.SudokuGame;
 
-internal class Board : ICloneable
+internal class Board 
 {
     private Cell[,] board;
     public int BoardSize;
