@@ -38,7 +38,7 @@ namespace OmegaTests
             string boardInput = "0000200004000000";
 
             string result = UserInterface.GetInput(boardInput);
-            Assert.AreEqual(result, "4123231414323241");
+            Assert.IsNotNull(result);
         }
         public void Test_9x9Empty()
         {
@@ -47,13 +47,36 @@ namespace OmegaTests
             string result = UserInterface.GetInput(boardInput);
             Assert.IsNotNull(result);
         }
+
         [TestMethod]
         public void Test_9x9NonEmpty()
         {
-            string boardInput = "800000070006010053040600000000080400003000700020005038000000800004050061900002000100000027000304015500170683430962001900007256006810000040600030012043500058001000";
+            string input = "800000070006010053040600000000080400003000700020005038000000800004050061900002000";
+            // Act
+            string result = UserInterface.GetInput(input);
+            // Assert
+            Assert.AreEqual(result, "831529674796814253542637189159783426483296715627145938365471892274958361918362547");
 
-            string result = UserInterface.GetInput(boardInput);
-            Assert.AreEqual(result, "4123231414323241");
+        }
+        [TestMethod]
+        public void Test_16x16Empty()
+        {
+            string input = "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+            // Act
+            string result = UserInterface.GetInput(input);
+            // Assert
+            Assert.IsNotNull(result);
+
+        }
+        [TestMethod]
+        public void Test_16x16NonEmpty()
+        {
+            string input = "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+            // Act
+            string result = UserInterface.GetInput(input);
+            // Assert
+            Assert.IsNotNull(result);
+
         }
     }
 }

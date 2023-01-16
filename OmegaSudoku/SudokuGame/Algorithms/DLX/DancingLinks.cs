@@ -22,7 +22,7 @@ internal class DancingLinks
     public Stack<DancingNode> DancingSolve()
     {
         this.Search();
-        return solution;
+        return this.solution;
     }
 
     public bool Search()
@@ -32,17 +32,20 @@ internal class DancingLinks
 
         ColumnHeader ColumnNode = ChooseColumn();
         ColumnNode.Cover();
+
         DancingNode row = ColumnNode.Down;
 
         while(row != ColumnNode)
         {
             solution.Push(row);
+
             DancingNode j = row.Right;
             while(j != row)
             {
                 j.Column.Cover();
                 j = j.Right;
             }
+
             if (Search())
                 return true;
 
@@ -69,14 +72,25 @@ internal class DancingLinks
 
     public ColumnHeader ChooseColumn() // Chooses the best column object to work on
     {
+
         ColumnHeader minColNode = (ColumnHeader)matrix.head.Right;
         // finds the column with the least amount of 1's
-        for (ColumnHeader node = (ColumnHeader)matrix.head.Right; node != matrix.head; node = (ColumnHeader)node.Right)
-        {
+        ColumnHeader node = (ColumnHeader)matrix.head.Right;
+
+        while(node != matrix.head){
             if (node.Size < minColNode.Size)
                 minColNode = node;
+
+            node = (ColumnHeader)node.Right;
         }
         return minColNode;
+        
+        //for (ColumnHeader node = (ColumnHeader)matrix.head.Right; node != matrix.head; node = (ColumnHeader)node.Right)
+        //{
+        //    if (node.Size < minColNode.Size)
+        //        minColNode = node;
+        //}
+        //return minColNode;
     }
 
     //public void Cover(ColumnHeader node)

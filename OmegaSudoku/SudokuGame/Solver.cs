@@ -59,16 +59,17 @@ internal class Solver
     public string Solve()
     {
         ConstraintSolve();
+        Console.WriteLine(this.gameBoard.ToStringLine());
         if (EvaluateSolution() == 1)
             SudokuDLX.Solve(gameBoard);
         else
             BacktrackSolve();
-        return this.gameBoard.toStringLine();
+        return this.gameBoard.ToStringLine();
     }
     
     public int EvaluateSolution() // Decides which backtracking algorithm to use (DLX or regular)
     {
-        if (gameBoard.BoardSize >1)
+        if (gameBoard.BoardSize >16)
             return 1;
         else
             return 0;
@@ -78,6 +79,18 @@ internal class Solver
     // A function to solve the puzzle using constraint propagation
     public void ConstraintSolve()
     {
+        for(int row = 0; row < gameBoard.BoardSize; row++)
+        {
+            for(int col =0; col < gameBoard.BoardSize; col++)
+            {
+                if (gameBoard[row, col] != 0)
+                {
+                    SudokuStrategies.MarkPossibilities(row, col, gameBoard[row, col], gameBoard);
+
+                }
+
+            }
+        }
         ConstraintPropagation.ConstraintSolve(gameBoard);
     }
 

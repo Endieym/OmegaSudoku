@@ -52,13 +52,12 @@ internal class SparseMatrix
                 DancingNode left = row.Left;
                 while (left != row)
                 {
-                    left.Column.Size++;
 
                     // This works because the links of the current Node still exist after
                     // removing it from the matrix
                     left.RelinkColumn();  // U[D[j]] <- j
                                           // D[U[j]] <- j
-
+                    left.Column.Size++;
                     left = left.Left;
                 }
                 row = row.Up;

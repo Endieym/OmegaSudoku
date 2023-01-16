@@ -30,8 +30,19 @@ internal class Board
                 board[i, j] = new Cell(boardString[j + BoardSize * i], i, j);
             }
         }
-
-        
+    
+    }
+    public string ToStringLine()
+    {
+        string result = "";
+        for(int i =0; i < BoardSize; i++)
+        {
+            for(int j = 0; j < BoardSize; j++)
+            {
+                result += this.board[i, j].Value;
+            }
+        }
+        return result;
     }
     
     public void UpdateRow(int row, int num)

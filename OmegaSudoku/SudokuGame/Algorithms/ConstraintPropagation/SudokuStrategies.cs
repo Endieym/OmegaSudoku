@@ -19,7 +19,7 @@ internal static class SudokuStrategies
         }
         else
         {
-            if ((gameBoard[row * gameBoard.BoardSize + col].PossibleValue + 2 & 1) == 1)
+            if (((gameBoard[row * gameBoard.BoardSize + col].PossibleValue + 2) & 1) == 1)
                 throw new UnsolvableBoardException();
             int hidden = HiddenCell(row, col, gameBoard);
             if (hidden != 0)

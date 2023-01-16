@@ -42,13 +42,13 @@ internal static class SudokuSolver
             printTime(stopwatch);
         }
 
-        return board.toStringLine();
+        return board.ToStringLine();
 
     }
     
     public static void writeSolutionToFile(Board board)
     {
-        File.WriteAllText(Constants.DefaultWrite, board.toStringLine());
+        File.WriteAllText(Constants.DefaultWrite, board.ToStringLine());
     }
     public static void printTime(Stopwatch stopwatch)
     {
