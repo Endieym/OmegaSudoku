@@ -42,8 +42,44 @@ namespace OmegaSudoku.SudokuGame.Algorithms.DLX
         {
             node.Right = this.Right; 
             node.Left = this;
-            this.Right.Left = this;
+            this.Right.Left = node;
             this.Right = node;
         }
+        /// <summary>
+        /// Unlinks the node from its row
+        /// </summary>
+        public void UnlinkRow()
+        {
+            this.Right.Left = this.Left;
+            this.Left.Right = this.Right;
+
+        }
+        /// <summary>
+        /// Unlinks the node from its column
+        /// </summary>
+        public void UnlinkCol()
+        {
+            this.Down.Up = this.Up;
+            this.Up.Down = this.Down;
+
+        }
+        /// <summary>
+        /// Relinks the node to its previous row
+        /// </summary>
+        public void RelinkRow()
+        {
+            this.Left.Right = this.Right.Left = this;
+
+        }
+        /// <summary>
+        /// Relinks the node to its previous column
+        /// </summary>
+        public void RelinkColumn()
+        {
+            this.Up.Down = this.Down.Up = this;
+
+        }
+
+
     }
 }
