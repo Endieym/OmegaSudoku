@@ -13,8 +13,7 @@ internal class Backtracking
     {
         int row = -1;
         int col = -1;
-        bool isEmpty = true;
-
+        bool isEmpty = true;       
         for (int i = 0; i < gameBoard.BoardSize; i++)
         {
             for (int j = 0; j < gameBoard.BoardSize; j++)

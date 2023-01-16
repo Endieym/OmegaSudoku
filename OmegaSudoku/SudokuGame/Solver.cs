@@ -1,4 +1,5 @@
-﻿using OmegaSudoku.SudokuGame.Algorithms.Backtracking;
+﻿using OmegaSudoku.Exceptions;
+using OmegaSudoku.SudokuGame.Algorithms.Backtracking;
 using OmegaSudoku.SudokuGame.Algorithms.ConstraintPropagation;
 using OmegaSudoku.SudokuGame.Algorithms.DLX;
 using System;
@@ -64,9 +65,9 @@ internal class Solver
             BacktrackSolve();
     }
     
-    public int EvaluateSolution()
+    public int EvaluateSolution() // Decides which backtracking algorithm to use (DLX or regular)
     {
-        if (gameBoard.BoardSize > 16)
+        if (gameBoard.BoardSize >4)
             return 1;
         else
             return 0;
@@ -83,7 +84,9 @@ internal class Solver
 
     public void BacktrackSolve()
     {
-        Backtracking.BacktrackSolve(gameBoard);
+        if (!Backtracking.BacktrackSolve(gameBoard))
+            throw new UnsolvableBoardException();
+
     }    
 
     public bool IsValidBitwise(int row, int col, int num)

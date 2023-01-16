@@ -31,7 +31,7 @@ internal class DancingLinks
             return true;
 
         ColumnHeader ColumnNode = ChooseColumn();
-        Cover(ColumnNode);
+        ColumnNode.Cover();
         DancingNode row = ColumnNode.Down;
 
         while(row != ColumnNode)
@@ -40,7 +40,7 @@ internal class DancingLinks
             DancingNode j = row.Right;
             while(j != row)
             {
-                Cover(j.Column);
+                j.Column.Cover();
                 j = j.Right;
             }
             if (Search())
@@ -54,7 +54,7 @@ internal class DancingLinks
             // Uncover the columns that were covered
             while (j != row)
             {
-                Uncover(j.Column);
+                j.Column.Uncover();
                 j = j.Left;
             }
 
@@ -62,7 +62,7 @@ internal class DancingLinks
             row = row.Down;
         }
         // Uncover the selected column
-        Uncover(ColumnNode);
+        ColumnNode.Uncover();
         return false;
 
     }
@@ -79,47 +79,47 @@ internal class DancingLinks
         return minColNode;
     }
 
-    public void Cover(ColumnHeader node)
-    {
-        // Covers the column in the matrix
+    //public void Cover(ColumnHeader node)
+    //{
+    //    // Covers the column in the matrix
 
-        node.Right.Left = node.Left; // L[R[c]] <- L[c]
-        node.Left.Right = node.Right; // R[L[c]] <- R[c]
+    //    node.Right.Left = node.Left; // L[R[c]] <- L[c]
+    //    node.Left.Right = node.Right; // R[L[c]] <- R[c]
 
-        DancingNode row = node.Down;
-        while(row != node)
-        {
-            DancingNode right =  row.Right;
-            while( right != row)
-            {
-                right.Down.Up = right.Up;
-                right.Up.Down = right.Down;
+    //    DancingNode row = node.Down;
+    //    while(row != node)
+    //    {
+    //        DancingNode right =  row.Right;
+    //        while( right != row)
+    //        {
+    //            right.Down.Up = right.Up;
+    //            right.Up.Down = right.Down;
 
-                right.Column.Size--;
-                right = right.Right;
-            }
-            row = row.Down;
-        }
-    }
-    public void Uncover(ColumnHeader node)
-    {
-        DancingNode row = node.Up;
-        while (row != node)
-        {
-            DancingNode left = row.Left;
-            while(left != row)
-            {
-                left.Column.Size++;
-                // This works because the links of the current Node still exist after
-                // removing it from the matrix
-                left.Down.Up = left;   // U[D[j]] <- j
-                left.Up.Down = left;   // D[U[j]] <- j
-                left = left.Left;
-            }
-            row = row.Up;
-        }
-        node.Right.Left = node;  // L[R[c]] = c
-        node.Left.Right = node;  // R[L[c]] = c   
-    }
+    //            right.Column.Size--;
+    //            right = right.Right;
+    //        }
+    //        row = row.Down;
+    //    }
+    //}
+    //public void Uncover(ColumnHeader node)
+    //{
+    //    DancingNode row = node.Up;
+    //    while (row != node)
+    //    {
+    //        DancingNode left = row.Left;
+    //        while(left != row)
+    //        {
+    //            left.Column.Size++;
+    //            // This works because the links of the current Node still exist after
+    //            // removing it from the matrix
+    //            left.Down.Up = left;   // U[D[j]] <- j
+    //            left.Up.Down = left;   // D[U[j]] <- j
+    //            left = left.Left;
+    //        }
+    //        row = row.Up;
+    //    }
+    //    node.Right.Left = node;  // L[R[c]] = c
+    //    node.Left.Right = node;  // R[L[c]] = c   
+    //}
 
 }

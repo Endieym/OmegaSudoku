@@ -18,6 +18,51 @@ internal class SparseMatrix
             this.Size = 0;
             this.Column = this;
         }
+        public void Cover()
+        {
+            // Covers the column in the matrix
+
+            this.Right.Left = this.Left; // L[R[c]] <- L[c]
+            this.Left.Right = this.Right; // R[L[c]] <- R[c]
+
+            DancingNode row = this.Down;
+            while (row != this)
+            {
+                DancingNode right = row.Right;
+                while (right != row)
+                {
+                    right.Down.Up = right.Up;
+                    right.Up.Down = right.Down;
+
+                    right.Column.Size--;
+                    right = right.Right;
+                }
+                row = row.Down;
+            }
+        }
+
+        public void Uncover()
+        {
+            DancingNode row = this.Up;
+            while (row != this)
+            {
+                DancingNode left = row.Left;
+                while (left != row)
+                {
+                    left.Column.Size++;
+                    // This works because the links of the current Node still exist after
+                    // removing it from the matrix
+                    left.Down.Up = left;   // U[D[j]] <- j
+                    left.Up.Down = left;   // D[U[j]] <- j
+                    left = left.Left;
+                }
+                row = row.Up;
+            }
+            this.Right.Left = this;  // L[R[c]] = c
+            this.Left.Right = this;  // R[L[c]] = c   
+        }
+
+
     }
 
     public ColumnHeader head;
