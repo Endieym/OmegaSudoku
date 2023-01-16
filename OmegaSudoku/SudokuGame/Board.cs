@@ -193,6 +193,11 @@ internal class Board
         return -1;
     }
 
+    public int GetBoxIndex(int row, int col)
+    {
+        return (row / BoxSize) * BoxSize + col / BoxSize;
+    }
+
     public IEnumerable<Cell> GetBox(int row, int col)
     {
         var iBox = row / BoxSize;

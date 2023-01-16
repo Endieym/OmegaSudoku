@@ -58,7 +58,19 @@ internal class Solver
     public void Solve()
     {
         ConstraintSolve();
-        SudokuReduction.Solve(gameBoard);
+        if (EvaluateSolution() == 1)
+            SudokuDLX.Solve(gameBoard);
+        else
+            BacktrackSolve();
+    }
+    
+    public int EvaluateSolution()
+    {
+        if (gameBoard.BoardSize > 16)
+            return 1;
+        else
+            return 0;
+       
     }
 
     // A function to solve the puzzle using constraint propagation

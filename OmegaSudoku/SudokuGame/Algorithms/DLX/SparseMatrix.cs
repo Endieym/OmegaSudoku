@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OmegaSudoku.SudokuGame.Algorithms.DLX;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,120 +9,67 @@ namespace OmegaSudoku.SudokuGame.Algorithms;
 
 internal class SparseMatrix
 {
-    public class Node      
+    public class ColumnHeader : DancingNode
     {
-        public int Row { get; set; }
-        public Node Left { get; set; }
-        public Node Right { get; set; }
-        public Node Up { get; set; }
-        public Node Down { get; set; }
-        public Node Column { get; set; }
+        public int Index { get; set; }
         public int Size { get; set; }
+        public ColumnHeader() : base(null)
+        {
+            this.Size = 0;
+            this.Column = this;
+        }
     }
 
-    public Node head;
-    public Node[] cols;
-    public SparseMatrix(int row, int col)
+    public ColumnHeader head;
+    public ColumnHeader[] cols;
+    public SparseMatrix(int col)
     {
        
-        this.head = new Node();
-        this.cols = new Node[col];
-        this.head.Down = head;
-        this.head.Up = head;
+        this.head = new ColumnHeader();
+        this.cols = new ColumnHeader[col];
+        ColumnHeader prev = head;        
         for(int i = 0; i < col; i++)
         {
-            cols[i] = new Node();
-            cols[i].Column = cols[i];
-            cols[i].Size = 0;
-            if (i == 0)
+            cols[i] = new ColumnHeader();
+            cols[i].Index = i;
+
+            prev.LinkRight(cols[i]);
+            prev = cols[i];
+
+        }
+
+
+    }
+
+    public void ConvertToDLX(byte[,] matrix)
+    {
+        for(int i = 0; i < matrix.GetLength(0); i++)
+        {
+            DancingNode? prev = null;
+            for (int j = 0; j < matrix.GetLength(1); j++)
             {
-                head.Right = cols[i];
-                cols[i].Left = head;
+                if (matrix[i, j] == 1) // check if the cell is not empty
+                {
+                    ColumnHeader currentColumn = cols[j];
+
+                    DancingNode node = new DancingNode(currentColumn);
+                    // Insert the new node below the column
+                    currentColumn.Up.LinkDown(node);
+
+                    if (prev == null) prev = node;
+                    else
+                    {
+                        prev.LinkRight(node);
+                        prev = node;
+                    }
+                    currentColumn.Size++;
+                }
+                
             }
-            else
-            {
-                cols[i - 1].Right = cols[i];
-                cols[i].Left = cols[i - 1];
-            }
-            cols[i].Down = cols[i];
-            cols[i].Up = cols[i];
-            cols[i].Right = head;
-
         }
-
-
-
     }
 
-    Node FindAbove(int row, int col)
-    {
-        Node temp, tempCol;
-        int i;
-
-        temp = head.Right;
-        while (--col != 0)
-        {
-            temp = temp.Right;
-
-
-        }
-        tempCol = temp;
-        while (temp.Down.Row < row && temp != tempCol)
-        {
-            temp = temp.Down;
-
-        }
-        return temp;
-
-
-    }
-
-    Node FindBefore(int row, int col)
-    {
-        Node temp, tempRow;
-        int i;
-
-        
-        temp = head;
-        while (temp.Right.Column != cols[col] && temp != head)
-        {
-            temp = temp.Right;
-
-        }
-
-        tempRow = temp;
-
-        while (temp.Down != tempRow && temp.Down.Row != row)
-        {
-            temp = temp.Down;
-
-        }
-        return temp;
-
-
-    }
-
-    public void AddNode(int row, int col)
-    {
-        Node node = new Node();
-        node.Row = row;
-        node.Column = cols[col];
-        node.Column.Size++;
-        Node nodeBefore, nodeAbove;
-        nodeBefore= FindBefore(row, col);
-        nodeAbove = FindAbove(row, col);
-        // Link the node to the column
-        node.Up = nodeAbove;
-        node.Down = nodeAbove.Down;
-        nodeAbove.Down.Up = node;
-        nodeAbove.Down = node;
-        // Link the node from the left and right
-        node.Left = nodeBefore;
-        node.Right = nodeBefore.Right;
-        nodeBefore.Right.Left = node;
-        nodeBefore.Right = node;
-
-    }
+  
 
     
 }

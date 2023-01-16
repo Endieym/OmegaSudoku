@@ -23,5 +23,7 @@ internal static class Constants
     public enum inputType {FILE, CONSOLE};
     public static inputType currentInput;
     public const int MaxScale = 25;
+    public const int NUM_CONSTRAINTS = 4;
+
 
 }

@@ -10,35 +10,45 @@ namespace OmegaSudoku.SudokuGame.Algorithms.DLX;
 internal class DancingLinks
 {
     private SparseMatrix matrix;
-    private List<int> solution;
+    private Stack<DancingNode> solution;
 
 
     public DancingLinks(SparseMatrix matrix)
     {
         this.matrix = matrix;
-        this.solution = new List<int>();
+        this.solution = new Stack<DancingNode>();
     }
 
-    public List<int> Search()
+    public Stack<DancingNode> DancingSolve()
+    {
+        this.Search();
+        return solution;
+    }
+
+    public bool Search()
     {
         if(matrix.head.Right == matrix.head)
-            return solution;
+            return true;
 
-        Node ColumnNode = ChooseColumn();
+        ColumnHeader ColumnNode = ChooseColumn();
         Cover(ColumnNode);
-        Node row = ColumnNode.Down;
+        DancingNode row = ColumnNode.Down;
 
         while(row != ColumnNode)
         {
-            solution.Add(row.Row);
-            Node j = row.Right;
+            solution.Push(row);
+            DancingNode j = row.Right;
             while(j != row)
             {
                 Cover(j.Column);
                 j = j.Right;
             }
-            Search();
-            Node column = row.Column;
+            if (Search())
+                return true;
+
+            row = solution.Pop();
+
+            ColumnNode = row.Column;
             j = row.Left;
 
             // Uncover the columns that were covered
@@ -48,20 +58,20 @@ internal class DancingLinks
                 j = j.Left;
             }
 
-            solution.Remove(row.Row);
+            
             row = row.Down;
         }
         // Uncover the selected column
         Uncover(ColumnNode);
-        return null;
-
+        return false;
 
     }
-    public Node ChooseColumn() // Chooses the best column object to work on
+
+    public ColumnHeader ChooseColumn() // Chooses the best column object to work on
     {
-        Node minColNode = matrix.head.Right;
+        ColumnHeader minColNode = (ColumnHeader)matrix.head.Right;
         // finds the column with the least amount of 1's
-        for (Node node = matrix.head.Right; node != matrix.head; node = node.Right)
+        for (ColumnHeader node = (ColumnHeader)matrix.head.Right; node != matrix.head; node = (ColumnHeader)node.Right)
         {
             if (node.Size < minColNode.Size)
                 minColNode = node;
@@ -69,33 +79,34 @@ internal class DancingLinks
         return minColNode;
     }
 
-    public void Cover(Node node)
+    public void Cover(ColumnHeader node)
     {
         // Covers the column in the matrix
 
         node.Right.Left = node.Left; // L[R[c]] <- L[c]
         node.Left.Right = node.Right; // R[L[c]] <- R[c]
 
-        Node row = node.Down;
+        DancingNode row = node.Down;
         while(row != node)
         {
-            Node right =  row.Right;
+            DancingNode right =  row.Right;
             while( right != row)
             {
                 right.Down.Up = right.Up;
                 right.Up.Down = right.Down;
+
                 right.Column.Size--;
                 right = right.Right;
             }
             row = row.Down;
         }
     }
-    public void Uncover(Node node)
+    public void Uncover(ColumnHeader node)
     {
-        Node row = node.Up;
+        DancingNode row = node.Up;
         while (row != node)
         {
-            Node left = row.Left;
+            DancingNode left = row.Left;
             while(left != row)
             {
                 left.Column.Size++;
