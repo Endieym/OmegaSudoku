@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace OmegaSudoku.Exceptions;
 
+//Exception class for wrong input
 [Serializable]
-internal class InputException : Exception
+public class InputException : Exception
 {
     public InputException() { }
 
@@ -27,13 +28,13 @@ internal class InputException : Exception
 
 [Serializable]
 
-internal class EmptyStringException : InputException
+public class EmptyStringException : InputException
 {
     public EmptyStringException() : base("String is Empty!") { }
 
 }
 
-internal class IllegalSizeException : InputException
+public class IllegalSizeException : InputException
 {
     public IllegalSizeException(int length) : base("String is not at the correct length!\n" +
         "Input length: " + length +
@@ -42,7 +43,7 @@ internal class IllegalSizeException : InputException
 
 }
 
-internal class IllegalCharacterException : InputException
+public class IllegalCharacterException : InputException
 {
     public IllegalCharacterException(string input, int pos) : base(input, pos) { }
 

@@ -7,7 +7,7 @@ using OmegaSudoku.Exceptions;
 
 namespace OmegaSudoku.SudokuGame;
 
-internal class BoardValidation
+public class BoardValidation
 {
     public static bool BoardValidate(Board board)
     {

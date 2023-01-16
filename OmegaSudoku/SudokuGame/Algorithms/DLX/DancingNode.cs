@@ -7,6 +7,9 @@ using static OmegaSudoku.SudokuGame.Algorithms.SparseMatrix;
 
 namespace OmegaSudoku.SudokuGame.Algorithms.DLX
 {
+    /// <summary>
+    /// This class represents a single node in the dancing links matrix
+    /// </summary>
     internal class DancingNode
     {
         public DancingNode Left { get; set; }

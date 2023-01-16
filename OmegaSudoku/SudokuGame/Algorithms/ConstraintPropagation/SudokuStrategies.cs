@@ -9,7 +9,13 @@ namespace OmegaSudoku.SudokuGame.Algorithms.ConstraintPropagation;
 
 internal static class SudokuStrategies
 {
-
+    /// <summary>
+    /// Uses the strategies saved
+    /// </summary>
+    /// <param name="row"></param>
+    /// <param name="col"></param>
+    /// <param name="gameBoard"></param>
+    /// <exception cref="UnsolvableBoardException"></exception>
     public static void UseStrategies(int row, int col, Board gameBoard)
     {
         if (gameBoard[row, col] != 0)

@@ -7,10 +7,19 @@ namespace OmegaSudoku.SudokuGame;
 
 internal static class SudokuSolver
 {
+    /// <summary>
+    /// This function tries to solve the sudoku board given, if the sudoku is unsolvable,
+    /// will print a message accordingly
+    /// Prints the time it took to solve the sudoku puzzle
+    /// And writes it to SudokuSolution file when read a file in input
+    /// </summary>
+    /// <param name="ValidatedInput"></param>
+    /// <param name="BoardSize"></param>
+    /// <returns></returns>
     public static string? SolveSuduko(string ValidatedInput, int BoardSize)
     {
         Board board = new(ValidatedInput, BoardSize);
-
+        string solution;
         board.PrintBoard();
         if (!InitialBoardValidation(board))
         {
@@ -34,6 +43,7 @@ internal static class SudokuSolver
         finally
         {
             stopwatch.Stop();
+            board = solve.GetBoard();
             board.PrintBoard();
             if(Constants.currentInput == Constants.inputType.FILE)
             {
@@ -46,10 +56,12 @@ internal static class SudokuSolver
 
     }
     
+   // writes solution to defualt solution file
     public static void writeSolutionToFile(Board board)
     {
         File.WriteAllText(Constants.DefaultWrite, board.ToStringLine());
     }
+    //prints the time it took to solve, with different colors for each timespan
     public static void printTime(Stopwatch stopwatch)
     {
         long elapsedTime = stopwatch.ElapsedMilliseconds;
@@ -68,6 +80,7 @@ internal static class SudokuSolver
 
     }
 
+    // Validates if the board is legal ( no duplicates)
     public static bool InitialBoardValidation(Board board)
     {
         try

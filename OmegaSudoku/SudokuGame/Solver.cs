@@ -19,43 +19,17 @@ public class Solver
     {
         this.gameBoard = gameBoard;
     }
-    public void ChangePossibilites(int row, int col,
-        IEnumerable<int> rowPossibilites,
-        IEnumerable<int> colPossibilites,
-        IEnumerable<int> boxPossibilites)
-    {
-        var currRow = gameBoard.GetRow(row);
-        int i = 0;
-        foreach(var r in currRow)
-        {
-            r.PossibleValue = rowPossibilites.ElementAt(i++);
-        }
-        var currCol = gameBoard.GetCol(col);
-        i = 0;
-        foreach (var c in currCol)
-        {
-            c.PossibleValue = colPossibilites.ElementAt(i++);
-        }
-        var currBox = gameBoard.GetBox(row, col);
-        i = 0;
-        foreach (var b in currBox)
-        {
-            b.PossibleValue = boxPossibilites.ElementAt(i++);
-        }
+  
 
-    }
-    public void ApplyConstraints()
-    {
-        for (int row = 0; row < gameBoard.BoardSize; row++)
-        {
-            for (int col = 0; col < gameBoard.BoardSize; col++)
-            {
-                SudokuStrategies.UseStrategies(row, col, gameBoard);
 
-            }
-        }
-        
-    }
+    /// <summary>
+    /// Function which tries to solve the sudoku puzzle
+    /// Does it in two seperate threads
+    /// Tries DLX and Normal backtracking at the same time
+    /// Whichever is faster will be used.
+    /// </summary>
+    /// <returns>returns the string of the solution</returns>
+    /// <exception cref="UnsolvableBoardException"></exception>
     public string Solve()
     {
         ConstraintSolve();
@@ -65,6 +39,7 @@ public class Solver
         Task task1 = new Task(() => DlxBacktrack(cts.Token),cts.Token);
         Task task2 = new Task(() => BacktrackNormal(cts.Token), cts.Token);
 
+        // starts the threads
         task1.Start();
         task2.Start();
 
@@ -87,11 +62,11 @@ public class Solver
 
     }
 
-    public Board GetBoard()
+    public Board GetBoard() // getter for the board
     {
         return this.gameBoard;
     }
-    private bool DlxBacktrack(CancellationToken ct)
+    private bool DlxBacktrack(CancellationToken ct) // Calls for dlx algorithm
     {
         Board puzzleTemp = (Board)this.gameBoard.Clone();
         bool flag = SudokuDLX.Solve(puzzleTemp);
@@ -107,7 +82,7 @@ public class Solver
        
 
     }
-    public bool BacktrackNormal(CancellationToken ct)
+    public bool BacktrackNormal(CancellationToken ct) // calls for backtracking algorithm
     {
         Board puzzleTemp = (Board)this.gameBoard.Clone();
         bool flag = BacktrackSolve(puzzleTemp);
@@ -128,14 +103,6 @@ public class Solver
 
     }
 
-    public int EvaluateSolution() // Decides which backtracking algorithm to use (DLX or regular)
-    {
-        if (gameBoard.BoardSize >16)
-            return 1;
-        else
-            return 0;
-       
-    }
 
     // A function to solve the puzzle using constraint propagation
     public void ConstraintSolve()
@@ -157,7 +124,7 @@ public class Solver
 
 
 
-    public bool BacktrackSolve(Board puzzle)
+    public bool BacktrackSolve(Board puzzle) // calls for backtracking
     {
         if (!Backtracking.BacktrackSolve(puzzle))
             return false;
@@ -165,69 +132,4 @@ public class Solver
 
     }    
 
-    public bool IsValidBitwise(int row, int col, int num)
-    {
-       
-        
-        
-        // check row using bitmask
-        int rowMask = 0;
-        for (int i = 0; i < gameBoard.BoardSize; i++)
-        {
-            rowMask |= 1 << gameBoard[row, i];
-        }
-        if ((rowMask & (1 << num)) > 0)
-        {
-            return false;
-        }
-
-        // check col using bitmask
-        int colMask = 0;
-        for (int i = 0; i < gameBoard.BoardSize; i++)
-        {
-            colMask |= 1 << gameBoard[i, col];
-        }
-        if ((colMask & (1 << num)) > 0)
-        {
-            return false;
-        }
-
-        // check box grid using bitmask
-
-        int gridMask = 0;
-    
-        var iBox = row / gameBoard.BoxSize;
-        var jBox = col / gameBoard.BoxSize;
-        for (int i = iBox * gameBoard.BoxSize; i < (iBox + 1) * gameBoard.BoxSize; i++)
-        {
-            for (int j = jBox * gameBoard.BoxSize; j < (jBox + 1) * gameBoard.BoxSize; j++)
-            {
-                gridMask |= 1 << gameBoard[i, j];
-            }
-
-        }
-        if ((gridMask & (1 << num)) > 0)
-        {
-            return false;
-        }
-
-        // number is valid
-        return true;
-    }
-    public bool IsValid(int row, int col, char c)
-    {
-        var rowE = gameBoard.GetRow(row);
-        var colE = gameBoard.GetCol(col);
-        var boxE = gameBoard.GetBox(row, col);
-        for(int i = 0; i< gameBoard.BoardSize; i++)
-        {
-            if (rowE.ElementAt(i).Value == c)
-                return false;
-            if (colE.ElementAt(i).Value == c)
-                return false;
-            if (boxE.ElementAt(i).Value == c)
-                return false;
-        }
-        return true;
-    }
 }

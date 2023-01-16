@@ -85,7 +85,7 @@ public static class UserInterface
     
     public static string InputFromConsole()
     {
-        Constants.currentInput = Constants.inputType.FILE;
+        Constants.currentInput = Constants.inputType.CONSOLE;
         Console.WriteLine(Constants.InputMessage);
 
         string input = Console.ReadLine();
@@ -97,7 +97,6 @@ public static class UserInterface
         try
         {
             StringValidation.Validate(input);
-            Console.WriteLine("Success!");
             solution = SudokuSolver.SolveSuduko(input, (int)Math.Sqrt(input.Length));
             if (solution!=null)
             {

@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace OmegaSudoku.SudokuGame;
 
-internal class Board 
+public class Board 
 {
     private Cell[,] board;
     public int BoardSize;
     public int BoxSize;
 
-    public Board()
+    public Board(int boardSize)
     {
-        BoardSize = 0;
-        BoxSize = 0;
+        BoardSize = boardSize;
+        BoxSize = (int)Math.Sqrt(boardSize);
         board = new Cell[BoardSize, BoardSize];
     }
     public Board(string boardString, int boardSize)
@@ -32,7 +32,8 @@ internal class Board
         }
     
     }
-    public string ToStringLine()
+    
+    public string ToStringLine() // returns the board in a string line
     {
         string result = "";
         for(int i =0; i < BoardSize; i++)
@@ -45,7 +46,7 @@ internal class Board
         return result;
     }
     
-    public void UpdateRow(int row, int num)
+    public void UpdateRow(int row, int num) // Marks the entire row with the possible value num
     {
         var currRow = GetRow(row);
         foreach (var cell in currRow)
@@ -53,15 +54,16 @@ internal class Board
             cell.PossibleValue |= 1 << num;
         }
     }
-    public void UpdateCol(int col, int num)
-    {
+    public void UpdateCol(int col, int num) // Marks the entire row with the possible value num
+
+    { 
         var currCol = GetCol(col);
         foreach (var cell in currCol)
         {
             cell.PossibleValue |= 1 << num;
         }
     }
-    public void UpdateBox(int row, int col, int num)
+    public void UpdateBox(int row, int col, int num) // Marks the entire box with the possible value num
     {
         var currBox = GetBox(row, col);
         foreach (var cell in currBox)
@@ -70,23 +72,26 @@ internal class Board
         }
     }
 
+    // Indexer for specific board value (in int)
     public int this[int row, int col]
     {
         get { return board[row,col].Value - '0'; }
         set { board[row,col].Value = (char)(value +'0'); }
     }
+    // Indexer for specific board cell
     public Cell this[int index]
     {
         get { return board[index/this.BoardSize, index % this.BoardSize]; }
         set { board[index / this.BoardSize, index % this.BoardSize].Value = value.Value; }
     }
 
-    public void PrintBoard()
+    
+    public void PrintBoard() // Prints the board
     {
         Console.WriteLine(ToString());
     }
 
-
+    // ToString method
     public override string ToString()
     {
         string str = "";
@@ -105,26 +110,8 @@ internal class Board
         }
         return str;
     }
-    public bool BoardValid()
-    {
-
-        for (int i = 0; i < BoardSize; i++)
-        {
-            if (CheckRowDups(i) != -1) return false;
-            if (CheckColDups(i) != -1) return false;
-
-        }
-        for (int i = 0; i < BoardSize; i += BoxSize)
-        {
-            for (int j = 0; j < BoardSize; j += BoxSize)
-            {
-                if (CheckBoxDups(i, j) != -1) return false;
-            }
-        }
-        return true;
-    }
-
-
+    
+    //Checks whether there are duplicates in the row, returns the row where there was a duplicate
     public int CheckRowDups(int row)
     {
         var currRow = GetRow(row);
@@ -139,6 +126,11 @@ internal class Board
         return -1;
     }
 
+    /// <summary>
+    /// Creates an IEnumerable list that contains every cell in the row 
+    /// </summary>
+    /// <param name="row"></param>
+    /// <returns>The IEnumerable</returns>
     public IEnumerable<Cell> GetRow(int row)
     {
         for (int i = 0; i < BoardSize; i++)
@@ -148,16 +140,12 @@ internal class Board
 
         }
     }
-    public IEnumerable<int> GetRowPossibilites(int row)
-    {
-        for (int i = 0; i < BoardSize; i++)
-        {
 
-            yield return board[row, i].PossibleValue;
-
-        }
-    }
-
+    /// <summary>
+    /// Creates an IEnumerable list that contains every cell in the column 
+    /// </summary>
+    /// <param name="col"></param>
+    /// <returns>The IEnumerable</returns>
     public IEnumerable<Cell> GetCol(int col)
     {
         for (int i = 0; i < BoardSize; i++)
@@ -167,15 +155,11 @@ internal class Board
 
         }
     }
-    public IEnumerable<int> GetColPossibilites(int col)
-    {
-        for (int i = 0; i < BoardSize; i++)
-        {
 
-            yield return board[i, col].PossibleValue;
 
-        }
-    }
+    //Checks whether there are duplicates in the column, returns the column
+    //index where there was a duplicate
+
     public int CheckColDups(int col)
     {
         var currCol = GetCol(col);
@@ -189,7 +173,8 @@ internal class Board
         }
         return -1;
     }
-
+    //Checks whether there are duplicates in the box of specific index, returns the box index
+    //where there was a duplicate
     public int CheckBoxDups(int row, int col)
     {
         var currBox = GetBox(row, col);
@@ -209,6 +194,13 @@ internal class Board
         return (row / BoxSize) * BoxSize + col / BoxSize;
     }
 
+    /// <summary>
+    /// Creates an IEnumerable list that contains every cell in the box 
+    /// that board[row,col] belongs to.
+    /// </summary>
+    /// <param name="row"></param>
+    /// <param name="col"></param>
+    /// <returns>The IEnumerable</returns>
     public IEnumerable<Cell> GetBox(int row, int col)
     {
         var iBox = row / BoxSize;
@@ -223,18 +215,21 @@ internal class Board
         }
     }
 
-    public IEnumerable<int> GetBoxPossibilites(int row, int col)
+    /// <summary>
+    /// Clones the board object, cloning its cells aswell
+    /// </summary>
+    /// <returns>the new cloned object</returns>
+    public object Clone() 
     {
-        var iBox = row / BoxSize;
-        var jBox = col / BoxSize;
-        for (int i = iBox * BoxSize; i < (iBox + 1) * BoxSize; i++)
+        Board temp = new Board(this.BoardSize);
+        for (int i = 0; i < this.BoardSize; i++)
         {
-            for (int j = jBox * BoxSize; j < (jBox + 1) * BoxSize; j++)
+            for (int j = 0; j < this.BoardSize; j++)
             {
-                yield return board[i, j].PossibleValue;
+                temp.board[i, j] = (Cell)this.board[i, j].Clone();
             }
-
         }
+        return temp;
     }
 
 }

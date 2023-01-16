@@ -7,7 +7,7 @@ using OmegaSudoku.Exceptions;
 
 namespace OmegaSudoku.UI;
 
-internal static class StringValidation
+public static class StringValidation
 {
     public static bool Validate(string Input)
     {

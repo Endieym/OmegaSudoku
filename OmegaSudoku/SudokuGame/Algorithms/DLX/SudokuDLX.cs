@@ -11,17 +11,28 @@ namespace OmegaSudoku.SudokuGame.Algorithms.DLX;
 
 internal class SudokuDLX
 {
-    public static void Solve(Board puzzle)
+    /// <summary>
+    /// Tries to solve using Dancing Links X Algorithm
+    /// </summary>
+    /// <param name="puzzle"></param>
+    /// <returns>Whether or not a solution was found</returns>
+    public static bool Solve(Board puzzle)
     {
 
         int size = puzzle.BoardSize;
         SparseMatrix DlxMatrix = GetMatrix(size, puzzle);
         DancingLinks dlx = new DancingLinks(DlxMatrix);
         Stack<DancingNode> nodes = dlx.DancingSolve();
-        ProccessSolution(nodes, puzzle);
+        return(ProccessSolution(nodes, puzzle));
 
     }
 
+    /// <summary>
+    /// Creates a cover matrix using the board and its size
+    /// </summary>
+    /// <param name="puzzle"></param>
+    /// <param name="BoardSize"></param>
+    /// <returns>the cover matrix (byte[,])</returns>
     public static byte[,] CreateCoverMatrix(Board puzzle, int BoardSize)
     {
         byte[,] byteBoard = new byte[BoardSize * BoardSize * BoardSize,
@@ -59,6 +70,12 @@ internal class SudokuDLX
 
         return byteBoard;
     }
+    /// <summary>
+    /// Creates a sparse matrix for the dlx
+    /// </summary>
+    /// <param name="gameScale"></param>
+    /// <param name="puzzle"></param>
+    /// <returns>The sparse matrix</returns>
     public static SparseMatrix GetMatrix(int gameScale, Board puzzle)
     {
         SparseMatrix matrix = new SparseMatrix(gameScale * gameScale 
@@ -70,11 +87,17 @@ internal class SudokuDLX
         return matrix;
     }
     
-    public static void ProccessSolution(Stack<DancingNode> solution, Board gameBoard)
+    /// <summary>
+    /// Procceses the solution, sets the values in the original board
+    /// </summary>
+    /// <param name="solution"></param>
+    /// <param name="gameBoard"></param>
+    /// <returns>Whether or not a solution was found</returns>
+    public static bool ProccessSolution(Stack<DancingNode> solution, Board gameBoard)
     {
 
         if (solution.Count == 0)
-            throw new UnsolvableBoardException();
+            return false;
 
         while(solution.Count > 0)
         {
@@ -99,6 +122,7 @@ internal class SudokuDLX
 
             gameBoard[row, col] = num;
         }
+        return true;
     }
 }
 

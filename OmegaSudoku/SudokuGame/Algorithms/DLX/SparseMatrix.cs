@@ -7,8 +7,14 @@ using System.Threading.Tasks;
 
 namespace OmegaSudoku.SudokuGame.Algorithms;
 
+/// <summary>
+/// This class represents a sparse matrix which the dancing links algorithm uses
+/// </summary>
 internal class SparseMatrix
 {
+    /// <summary>
+    /// This class represents a header node in the sparse matrix
+    /// </summary>
     public class ColumnHeader : DancingNode
     {
         public int Index { get; set; }
@@ -18,6 +24,8 @@ internal class SparseMatrix
             this.Size = 0;
             this.Column = this;
         }
+
+
         public void Cover()
         {
             // Covers the column in the matrix
@@ -91,6 +99,10 @@ internal class SparseMatrix
 
     }
 
+    /// <summary>
+    /// Initialises this object to be a sparse matrix for the inputted byte matrix
+    /// </summary>
+    /// <param name="matrix"></param>
     public void ConvertToDLX(byte[,] matrix)
     {
         for(int i = 0; i < matrix.GetLength(0); i++)
@@ -118,8 +130,4 @@ internal class SparseMatrix
             }
         }
     }
-
-  
-
-    
 }

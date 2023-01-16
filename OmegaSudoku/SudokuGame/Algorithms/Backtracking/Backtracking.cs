@@ -8,7 +8,11 @@ namespace OmegaSudoku.SudokuGame.Algorithms.Backtracking;
 
 internal class Backtracking
 {
-
+    /// <summary>
+    /// Tries to backtrack solve
+    /// </summary>
+    /// <param name="gameBoard"></param>
+    /// <returns>if successful</returns>
     public static bool BacktrackSolve(Board gameBoard)
     {
         int row = -1;
@@ -63,6 +67,14 @@ internal class Backtracking
         return false;
     }
 
+    /// <summary>
+    /// Checks if valid using bitmasks
+    /// </summary>
+    /// <param name="row"></param>
+    /// <param name="col"></param>
+    /// <param name="num"></param>
+    /// <param name="gameBoard"></param>
+    /// <returns>true or false if valid</returns>
     static bool IsValidBitwise(int row, int col, int num, Board gameBoard)
     {
 

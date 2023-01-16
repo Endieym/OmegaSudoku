@@ -25,6 +25,10 @@ internal class DancingLinks
         return this.solution;
     }
 
+    /// <summary>
+    /// The search algorithm of DLX
+    /// </summary>
+    /// <returns>Whether a solution was found or not</returns>
     public bool Search()
     {
         if(matrix.head.Right == matrix.head)
@@ -75,65 +79,15 @@ internal class DancingLinks
 
         ColumnHeader minColNode = (ColumnHeader)matrix.head.Right;
         // finds the column with the least amount of 1's
-        ColumnHeader node = (ColumnHeader)matrix.head.Right;
 
-        while(node != matrix.head){
+        for (ColumnHeader node = (ColumnHeader)matrix.head.Right; node != matrix.head; node = (ColumnHeader)node.Right)
+        {
             if (node.Size < minColNode.Size)
                 minColNode = node;
-
-            node = (ColumnHeader)node.Right;
         }
         return minColNode;
-        
-        //for (ColumnHeader node = (ColumnHeader)matrix.head.Right; node != matrix.head; node = (ColumnHeader)node.Right)
-        //{
-        //    if (node.Size < minColNode.Size)
-        //        minColNode = node;
-        //}
-        //return minColNode;
     }
 
-    //public void Cover(ColumnHeader node)
-    //{
-    //    // Covers the column in the matrix
-
-    //    node.Right.Left = node.Left; // L[R[c]] <- L[c]
-    //    node.Left.Right = node.Right; // R[L[c]] <- R[c]
-
-    //    DancingNode row = node.Down;
-    //    while(row != node)
-    //    {
-    //        DancingNode right =  row.Right;
-    //        while( right != row)
-    //        {
-    //            right.Down.Up = right.Up;
-    //            right.Up.Down = right.Down;
-
-    //            right.Column.Size--;
-    //            right = right.Right;
-    //        }
-    //        row = row.Down;
-    //    }
-    //}
-    //public void Uncover(ColumnHeader node)
-    //{
-    //    DancingNode row = node.Up;
-    //    while (row != node)
-    //    {
-    //        DancingNode left = row.Left;
-    //        while(left != row)
-    //        {
-    //            left.Column.Size++;
-    //            // This works because the links of the current Node still exist after
-    //            // removing it from the matrix
-    //            left.Down.Up = left;   // U[D[j]] <- j
-    //            left.Up.Down = left;   // D[U[j]] <- j
-    //            left = left.Left;
-    //        }
-    //        row = row.Up;
-    //    }
-    //    node.Right.Left = node;  // L[R[c]] = c
-    //    node.Left.Right = node;  // R[L[c]] = c   
-    //}
+    
 
 }

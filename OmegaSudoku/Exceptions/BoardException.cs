@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace OmegaSudoku.Exceptions;
 
+//Exception classes for illegal boards
 [Serializable]
 
-internal class BoardException : Exception
+public class BoardException : Exception
 {
     public BoardException() { }
 
@@ -24,23 +25,23 @@ internal class BoardException : Exception
 
 [Serializable]
 
-internal class RowException : BoardException
+public class RowException : BoardException
 {
     public RowException(int pos) : base(string.Format("Row {0} has two cells of the same value!", pos)) { }
 
 }
-internal class ColException : BoardException
+public class ColException : BoardException
 {
     public ColException(int pos) : base(string.Format("Col {0} has two cells of the same value!", pos)) { }
 
 }
-internal class BoxException : BoardException
+public class BoxException : BoardException
 {
     public BoxException(int i, int j) : base(string.Format("Box [{0},{1}] has two cells of the same value!", i, j)) { }
 
 }
 
-internal class UnsolvableBoardException : BoardException
+public class UnsolvableBoardException : BoardException
 {
     public UnsolvableBoardException() :base("Board is unsolvable!") { }
 }

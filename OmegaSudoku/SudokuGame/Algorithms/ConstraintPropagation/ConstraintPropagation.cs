@@ -8,7 +8,10 @@ namespace OmegaSudoku.SudokuGame.Algorithms.ConstraintPropagation;
 
 internal static class ConstraintPropagation
 {
-
+    /// <summary>
+    /// Applies constraints on the entire board
+    /// </summary>
+    /// <param name="gameBoard"></param>
     static void ApplyConstraints(Board gameBoard)
     {
         for (int row = 0; row < gameBoard.BoardSize; row++)
