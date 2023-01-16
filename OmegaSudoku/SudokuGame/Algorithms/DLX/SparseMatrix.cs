@@ -22,17 +22,20 @@ internal class SparseMatrix
         {
             // Covers the column in the matrix
 
-            this.Right.Left = this.Left; // L[R[c]] <- L[c]
-            this.Left.Right = this.Right; // R[L[c]] <- R[c]
+            this.UnlinkRow(); // L[R[c]] <- L[c]
+                              // R[L[c]] <- R[c]
 
             DancingNode row = this.Down;
             while (row != this)
             {
+
+                // Traverse the nodes connected to the current node (row)
                 DancingNode right = row.Right;
                 while (right != row)
                 {
-                    right.Down.Up = right.Up;
-                    right.Up.Down = right.Down;
+                    right.UnlinkCol();  // U[D[j]] <- U[j]
+                                        // D[U[j]] <- D[j]
+                    
 
                     right.Column.Size--;
                     right = right.Right;
@@ -50,16 +53,19 @@ internal class SparseMatrix
                 while (left != row)
                 {
                     left.Column.Size++;
+
                     // This works because the links of the current Node still exist after
                     // removing it from the matrix
-                    left.Down.Up = left;   // U[D[j]] <- j
-                    left.Up.Down = left;   // D[U[j]] <- j
+                    left.RelinkColumn();  // U[D[j]] <- j
+                                          // D[U[j]] <- j
+
                     left = left.Left;
                 }
                 row = row.Up;
             }
-            this.Right.Left = this;  // L[R[c]] = c
-            this.Left.Right = this;  // R[L[c]] = c   
+
+            this.RelinkRow();  // L[R[c]] = c
+                               // R[L[c]] = c   
         }
 
 
