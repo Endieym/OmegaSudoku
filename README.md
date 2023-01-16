@@ -25,12 +25,16 @@ The solution, if one exists, will be output to the console in the same format as
 Methods
 The solver uses a combination of the following methods to solve the puzzle:
 
-Constraint Propagation (human strategy)
-Normal Backtracking
-DLX (Dancing Links X)
+Constraint Propagation (human strategy): This method involves making logical deductions about the possible values of empty cells based on the given numbers in the puzzle. It is a technique that humans often use when solving Sudoku puzzles by hand.
+
+Normal Backtracking: This method involves trying different numbers in empty cells and backtracking when a contradiction is found. It is a simple, but potentially time-consuming, method for solving Sudoku puzzles.
+
+DLX (Dancing Links X): This method is a specific implementation of Algorithm X, a more efficient version of the backtracking algorithm. It uses a technique called "dancing links" to keep track of the possible values for each cell and make deductions about which numbers can be placed in which cells.
+
+The solver uses the DLX and normal backtracking methods simultaneously and will use whichever method solves the puzzle faster.
+
 Additional Features
 This solver can read and write to files, it can solve the sudoku puzzle using 3 different techniques, and it is written in C# using Visual Studio .NET 6.0
-
 
 Conclusion
 The Sudoku solver can be used to solve puzzles of varying difficulty and is a great tool for anyone looking to improve their solving skills or automate the process.
