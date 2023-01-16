@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace OmegaSudoku.SudokuGame;
 
-internal class Solver
+public class Solver
 {
-
-    private readonly Board gameBoard;
+    public static bool solutionFound = false;
+    private Board gameBoard;
 
     public Solver(Board gameBoard)
     {
@@ -58,29 +58,73 @@ internal class Solver
     }
     public string Solve()
     {
-        Parallel.Invoke(
-        () => {
-            DlxBacktrack();
-        },
-        () => {
-            BacktrackNormal();
+        ConstraintSolve();
+
+        var cts = new CancellationTokenSource();
+
+        Task task1 = new Task(() => DlxBacktrack(cts.Token),cts.Token);
+        Task task2 = new Task(() => BacktrackNormal(cts.Token), cts.Token);
+
+        task1.Start();
+        task2.Start();
+
+        while (!solutionFound)
+        {
+            if (task1.Wait(1))
+            {
+                cts.Cancel();
+                break;
+            }
+            if (task2.Wait(1))
+            {
+                cts.Cancel();
+                break;
+            }
         }
-    );
-        
-        
+        if (!solutionFound)
+            throw new UnsolvableBoardException();
         return this.gameBoard.ToStringLine();
-    }
-    public void DlxBacktrack()
-    {
-        SudokuDLX.Solve(gameBoard);
-        Console.WriteLine("DLX SOLVED");
 
     }
-    public void BacktrackNormal()
+
+    public Board GetBoard()
     {
-        ConstraintSolve();
-        BacktrackSolve();
-        Console.WriteLine("BACKTRACK SOLVED");
+        return this.gameBoard;
+    }
+    private bool DlxBacktrack(CancellationToken ct)
+    {
+        Board puzzleTemp = (Board)this.gameBoard.Clone();
+        bool flag = SudokuDLX.Solve(puzzleTemp);
+        if (!solutionFound && flag)
+        {
+            Console.WriteLine("DLX SOLVED");
+            solutionFound = true;
+            this.gameBoard = puzzleTemp;
+            ct.ThrowIfCancellationRequested();
+            return true;
+        }
+        return false;
+       
+
+    }
+    public bool BacktrackNormal(CancellationToken ct)
+    {
+        Board puzzleTemp = (Board)this.gameBoard.Clone();
+        bool flag = BacktrackSolve(puzzleTemp);
+        if (!solutionFound && flag)
+        {
+            Console.WriteLine("BACKTRACK SOLVED");
+            solutionFound = true;
+            this.gameBoard = puzzleTemp;
+            
+            ct.ThrowIfCancellationRequested();
+            return true;
+        }
+        
+        return false;
+        
+        
+        
 
     }
 
@@ -113,10 +157,11 @@ internal class Solver
 
 
 
-    public void BacktrackSolve()
+    public bool BacktrackSolve(Board puzzle)
     {
-        if (!Backtracking.BacktrackSolve(gameBoard))
-            throw new UnsolvableBoardException();
+        if (!Backtracking.BacktrackSolve(puzzle))
+            return false;
+        return true;
 
     }    
 
