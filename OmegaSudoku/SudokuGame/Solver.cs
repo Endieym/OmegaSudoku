@@ -58,15 +58,32 @@ internal class Solver
     }
     public string Solve()
     {
-        ConstraintSolve();
-        Console.WriteLine(this.gameBoard.ToStringLine());
-        if (EvaluateSolution() == 1)
-            SudokuDLX.Solve(gameBoard);
-        else
-            BacktrackSolve();
+        Parallel.Invoke(
+        () => {
+            DlxBacktrack();
+        },
+        () => {
+            BacktrackNormal();
+        }
+    );
+        
+        
         return this.gameBoard.ToStringLine();
     }
-    
+    public void DlxBacktrack()
+    {
+        SudokuDLX.Solve(gameBoard);
+        Console.WriteLine("DLX SOLVED");
+
+    }
+    public void BacktrackNormal()
+    {
+        ConstraintSolve();
+        BacktrackSolve();
+        Console.WriteLine("BACKTRACK SOLVED");
+
+    }
+
     public int EvaluateSolution() // Decides which backtracking algorithm to use (DLX or regular)
     {
         if (gameBoard.BoardSize >16)
