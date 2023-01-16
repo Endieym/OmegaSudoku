@@ -56,18 +56,19 @@ internal class Solver
         }
         
     }
-    public void Solve()
+    public string Solve()
     {
         ConstraintSolve();
         if (EvaluateSolution() == 1)
             SudokuDLX.Solve(gameBoard);
         else
             BacktrackSolve();
+        return this.gameBoard.toStringLine();
     }
     
     public int EvaluateSolution() // Decides which backtracking algorithm to use (DLX or regular)
     {
-        if (gameBoard.BoardSize >4)
+        if (gameBoard.BoardSize >1)
             return 1;
         else
             return 0;

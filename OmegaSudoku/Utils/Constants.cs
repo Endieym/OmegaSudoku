@@ -20,6 +20,8 @@ internal static class Constants
         "\n800000070006010053040600000000080400003000700020005038000000800004050061900002000";
     public const string InputMessage = "Enter a string:\n";
     public const string FileMessage = "Enter the file name:\n";
+    public const string RELATIVE_PATH = "..\\..\\";
+    public const string DefaultWrite = RELATIVE_PATH + "SudokuSolution.txt";
     public enum inputType {FILE, CONSOLE};
     public static inputType currentInput;
     public const int MaxScale = 25;

@@ -1,19 +1,20 @@
 ﻿using System.Diagnostics;
 using OmegaSudoku.Exceptions;
 using OmegaSudoku.UI;
+using OmegaSudoku.Utils;
 
 namespace OmegaSudoku.SudokuGame;
 
 internal static class SudokuSolver
 {
-    public static bool SolveSuduko(string ValidatedInput, int BoardSize)
+    public static string? SolveSuduko(string ValidatedInput, int BoardSize)
     {
         Board board = new(ValidatedInput, BoardSize);
 
         board.PrintBoard();
         if (!InitialBoardValidation(board))
         {
-            return false;
+            return null;
         }
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
@@ -28,19 +29,26 @@ internal static class SudokuSolver
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(be.Message);
             Console.ResetColor();
-            return false;
+            return null;
         }
         finally
         {
             stopwatch.Stop();
             board.PrintBoard();
+            if(Constants.currentInput == Constants.inputType.FILE)
+            {
+                writeSolutionToFile(board); 
+            }
             printTime(stopwatch);
         }
 
+        return board.toStringLine();
 
-        return true;
-
-
+    }
+    
+    public static void writeSolutionToFile(Board board)
+    {
+        File.WriteAllText(Constants.DefaultWrite, board.toStringLine());
     }
     public static void printTime(Stopwatch stopwatch)
     {
